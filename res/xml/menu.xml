@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="Test">
+        <Preference android:title="Test1"/>
+        <Preference android:title="Test2"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>
