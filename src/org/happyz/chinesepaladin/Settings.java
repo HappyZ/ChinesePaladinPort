@@ -56,21 +56,21 @@ class Settings {
 	 * Globally setup the directory
 	 */
 	private static void setupCurrentDirectory() {
-		if(Globals.CurrentDirectoryPathForLauncher != null && !Globals.CurrentDirectoryPathForLauncher.equals("")){
+		/*if(Globals.CurrentDirectoryPathForLauncher != null && !Globals.CurrentDirectoryPathForLauncher.equals("")){
 			File curDirFile = new File(Globals.CurrentDirectoryPathForLauncher);
 			if(!curDirFile.exists() || !curDirFile.isDirectory() || !curDirFile.canRead()){
 				Globals.CurrentDirectoryPathForLauncher = null;
 			}
-		}
+		}*/
 		// reinitialize the directory path
 		Globals.CurrentDirectoryPath = null;
 		String curDirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;
 		File curDirFile = new File(curDirPath);
 		if(curDirFile.exists() && curDirFile.isDirectory() && curDirFile.canRead() && (!Globals.CURRENT_DIRECTORY_NEED_WRITABLE || curDirFile.canWrite())){
 			String path = curDirFile.getAbsolutePath();
-			if(Globals.CurrentDirectoryPathForLauncher == null || Globals.CurrentDirectoryPathForLauncher.equals("")){
+			/*if(Globals.CurrentDirectoryPathForLauncher == null || Globals.CurrentDirectoryPathForLauncher.equals("")){
 				Globals.CurrentDirectoryPathForLauncher = path;
-			}
+			}*/
 			if(Globals.CurrentDirectoryPath == null || Globals.CurrentDirectoryPath.equals("")){
 				Globals.CurrentDirectoryPath = path;
 			}
@@ -93,7 +93,7 @@ class Settings {
 		//Load
 		
 		SharedPreferences sp = activity.getSharedPreferences("pref", Context.MODE_PRIVATE);
-		Globals.CurrentDirectoryPathForLauncher = sp.getString("CurrentDirectoryPathForLauncher", Globals.CurrentDirectoryPathForLauncher);
+		//Globals.CurrentDirectoryPathForLauncher = sp.getString("CurrentDirectoryPathForLauncher", Globals.CurrentDirectoryPathForLauncher);
 		Globals.MouseCursorShowed = sp.getBoolean("MouseCursorShowed", Globals.MouseCursorShowed);
 		Globals.ButtonLeftEnabled = sp.getBoolean("ButtonLeftEnabled", Globals.ButtonLeftEnabled);
 		Globals.ButtonRightEnabled = sp.getBoolean("ButtonRightEnabled", Globals.ButtonRightEnabled);
@@ -138,9 +138,9 @@ class Settings {
 		SharedPreferences sp = activity.getSharedPreferences("pref", Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
 		editor.clear();
-		if(Globals.CurrentDirectoryPathForLauncher != null){
+		/*if(Globals.CurrentDirectoryPathForLauncher != null){
 			editor.putString("CurrentDirectoryPathForLauncher", Globals.CurrentDirectoryPathForLauncher);
-		}
+		}*/
 		editor.putBoolean("MouseCursorShowed", Globals.MouseCursorShowed);
 		editor.putBoolean("ButtonLeftEnabled", Globals.ButtonLeftEnabled);
 		editor.putBoolean("ButtonRightEnabled", Globals.ButtonRightEnabled);

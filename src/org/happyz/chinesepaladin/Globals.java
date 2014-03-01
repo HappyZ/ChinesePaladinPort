@@ -93,7 +93,7 @@ class Globals {
 	public static final boolean CURRENT_DIRECTORY_NEED_WRITABLE = true;
 	public static final String CURRENT_DIRECTORY_PATH_TEMPLATE = "/data/ChinesePal";
 	
-	public static String CurrentDirectoryPathForLauncher = null;  //do not change
+	//public static String CurrentDirectoryPathForLauncher = null;  //do not change
 	public static String CurrentDirectoryPath = null;             //do not change
 	//public static String[] CurrentDirectoryPathArray = null;      //do not change
 	//public static String[] CurrentDirectoryValidPathArray = null; //do not change
