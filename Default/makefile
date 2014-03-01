@@ -34,6 +34,9 @@ RM := del
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/libmad/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/adplug/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/subdir.mk
+-include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/libmad/subdir.mk
+-include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/adplug/subdir.mk
+-include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/libmad/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/adplug/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/__/libmad/subdir.mk

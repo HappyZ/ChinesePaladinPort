@@ -27,10 +27,9 @@ freely, subject to the following restrictions:
 
 package org.happyz.chinesepaladin;
 
-import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.HashMap;
 import java.util.TreeMap;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.app.Activity;
@@ -39,12 +38,13 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.*;
+
 import android.os.Environment;
+
 import java.lang.String;
 
-class Settings
-{
-	private static final String LOCALS_SETTINGS_FILENAME = "cp_settings.ini";
+class Settings {
+	private static final String LOCALS_SETTINGS_FILENAME = "cpSettings";
 
 	private static boolean globalsSettingsLoaded  = false;
 	private static boolean globalsSettingsChanged = false;
@@ -52,54 +52,39 @@ class Settings
 	private static boolean localsSettingsLoaded  = false;
 	//private static boolean localsSettingsChanged = false;
 
-	private static void setupCurrentDirectory()
-	{
+	/**
+	 * Globally setup the directory
+	 */
+	private static void setupCurrentDirectory() {
 		if(Globals.CurrentDirectoryPathForLauncher != null && !Globals.CurrentDirectoryPathForLauncher.equals("")){
 			File curDirFile = new File(Globals.CurrentDirectoryPathForLauncher);
 			if(!curDirFile.exists() || !curDirFile.isDirectory() || !curDirFile.canRead()){
 				Globals.CurrentDirectoryPathForLauncher = null;
 			}
 		}
+		// reinitialize the directory path
 		Globals.CurrentDirectoryPath = null;
-		
-		ArrayList<String> curDirValidPathList = new ArrayList<String>();
-		TreeSet<String> curDirPathSet = new TreeSet<String>();
-
-		String curDirPathTemplate = Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;
-		curDirPathSet.add(curDirPathTemplate.replace("${MYPLACE}", Environment.getExternalStorageDirectory().getPath()));
-
-		Iterator<String> curDirIterator = curDirPathSet.iterator();
-		while(curDirIterator.hasNext()){
-			File curDirFile = new File(curDirIterator.next());
-			if(curDirFile.exists() && curDirFile.isDirectory() && curDirFile.canRead() && (!Globals.CURRENT_DIRECTORY_NEED_WRITABLE || curDirFile.canWrite())){
-				String path = curDirFile.getAbsolutePath();
-				if(Globals.CurrentDirectoryPathForLauncher == null || Globals.CurrentDirectoryPathForLauncher.equals("")){
-					Globals.CurrentDirectoryPathForLauncher = path;
-				}
-				if(Globals.CurrentDirectoryPath == null || Globals.CurrentDirectoryPath.equals("")){
-					Globals.CurrentDirectoryPath = path;
-				}
-				curDirValidPathList.add(path);
+		String curDirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;
+		File curDirFile = new File(curDirPath);
+		if(curDirFile.exists() && curDirFile.isDirectory() && curDirFile.canRead() && (!Globals.CURRENT_DIRECTORY_NEED_WRITABLE || curDirFile.canWrite())){
+			String path = curDirFile.getAbsolutePath();
+			if(Globals.CurrentDirectoryPathForLauncher == null || Globals.CurrentDirectoryPathForLauncher.equals("")){
+				Globals.CurrentDirectoryPathForLauncher = path;
+			}
+			if(Globals.CurrentDirectoryPath == null || Globals.CurrentDirectoryPath.equals("")){
+				Globals.CurrentDirectoryPath = path;
 			}
 		}
-		
-		//Globals.CurrentDirectoryPathArray = (String[])curDirPathSet.toArray(new String[0]);
-		//Globals.CurrentDirectoryValidPathArray = (String[])curDirValidPathList.toArray(new String[0]);
 	}
 
-	public static void LoadGlobals( MainActivity activity )
-	{
-		if(globalsSettingsLoaded) // Prevent starting twice
-		{
-			return;
-		}
-		
+	public static void LoadGlobals( MainActivity activity ) {
+		if(globalsSettingsLoaded) return; // Prevent starting twice
 		Globals.Run = true;
-
+		// initialize the key mapping
 		nativeInitKeymap();
+		// TODO: add more device with stylus
 		if( (android.os.Build.MODEL.equals("GT-N7000") || android.os.Build.MODEL.equals("SGH-I717"))
-		   && android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 )
-		{
+		   && android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 ) {
 			// Samsung Galaxy Note generates a keypress when you hover a stylus over the screen, and that messes up OpenTTD dialogs
 			// ICS update sends events in a proper way
 			nativeSetKeymapKey(112, SDL_1_2_Keycodes.SDLK_UNKNOWN);
@@ -130,14 +115,14 @@ class Settings
 			String[] keyVal = keyMap.split("=");
 			if(keyVal.length == 2){
 				try {
-					Globals.SDLKeyAdditionalKeyMap.put(new Integer(keyVal[0]), new Integer(keyVal[1]));
+					Globals.SDLKeyAdditionalKeyMap.put(Integer.valueOf(keyVal[0]), Integer.valueOf(keyVal[1]));
 				} catch(NumberFormatException e){}
 			}
 		}
 		
 		//Setup
 		
-		for(Iterator it = Globals.SDLKeyAdditionalKeyMap.entrySet().iterator(); it.hasNext();) {
+		for(Iterator<Entry<Integer, Integer>> it = Globals.SDLKeyAdditionalKeyMap.entrySet().iterator(); it.hasNext();) {
 			TreeMap.Entry<Integer,Integer> entry = (TreeMap.Entry<Integer,Integer>)it.next();
 			Integer javaKey = (Integer)entry.getKey();
 			Integer sdlKey = (Integer)entry.getValue();
@@ -149,8 +134,7 @@ class Settings
 		globalsSettingsLoaded = true;
 	}
 	
-	public static void SaveGlobals( MainActivity activity )
-	{
+	public static void SaveGlobals( MainActivity activity ) {
 		SharedPreferences sp = activity.getSharedPreferences("pref", Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
 		editor.clear();
@@ -172,7 +156,7 @@ class Settings
 		editor.putBoolean("GamePadArrowButtonAsAxis", Globals.GamePadArrowButtonAsAxis);
 		
 		StringBuffer buf = new StringBuffer();
-		for(Iterator it = Globals.SDLKeyAdditionalKeyMap.entrySet().iterator(); it.hasNext();) {
+		for(Iterator<Entry<Integer, Integer>> it = Globals.SDLKeyAdditionalKeyMap.entrySet().iterator(); it.hasNext();) {
 			TreeMap.Entry<Integer,Integer> entry = (TreeMap.Entry<Integer,Integer>)it.next();
 			Integer javaKey = (Integer)entry.getKey();
 			Integer sdlKey = (Integer)entry.getValue();
@@ -188,17 +172,11 @@ class Settings
 		editor.commit();
 	}
 	
-	public static void LoadLocals( MainActivity activity )
-	{
-		if(localsSettingsLoaded)
-		{
-			return;
-		}
+	public static void LoadLocals( MainActivity activity ) {
+		if(localsSettingsLoaded) return;
 		
 		Locals.Run = true;
 		
-		//
-
 		String path = Globals.CurrentDirectoryPath + "/" + LOCALS_SETTINGS_FILENAME;
 		
 		FileInputStream   fis = null;
@@ -233,49 +211,33 @@ class Settings
 								Locals.AppModuleName = val;
 							} else if(key.equals("AppCommandOptions")){
 								Locals.AppCommandOptions = val;
-							} else if(key.equals("ScreenOrientation")){
-								try {
-									Locals.ScreenOrientation = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoXPosition")){
-								try {
-									Locals.VideoXPosition = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoYPosition")){
-								try {
-									Locals.VideoYPosition = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoXMargin")){
-								try {
-									Locals.VideoXMargin = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoYMargin")){
-								try {
-									Locals.VideoYMargin = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoXRatio")){
-								try {
-									Locals.VideoXRatio = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoYRatio")){
-								try {
-									Locals.VideoYRatio = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoDepthBpp")){
-								try {
-									Locals.VideoDepthBpp = Integer.parseInt(val);
-								} catch(NumberFormatException ne){}
-							} else if(key.equals("VideoSmooth")){
-								Locals.VideoSmooth = Boolean.parseBoolean(val);
 							} else if(key.equals("TouchMode")){
 								Locals.TouchMode = val;
 							} else if(key.equals("AppLaunchConfigUse")){
 								Locals.AppLaunchConfigUse = Boolean.parseBoolean(val);
-							//} else if(key.equals("StdOutRedirect")){
-							//	Locals.StdOutRedirect = Boolean.parseBoolean(val);
-							} else {
-								Log.w("Engine(Java)","[Settings.LoadLocals()] Unknown Key=" + key + " Value=" + val);
-							}
+							} else if(key.equals("VideoSmooth")){
+								Locals.VideoSmooth = Boolean.parseBoolean(val);
+							} else try {
+								if(key.equals("ScreenOrientation")){
+									Locals.ScreenOrientation = Integer.parseInt(val);
+								} else if(key.equals("VideoXPosition")){
+									Locals.VideoXPosition = Integer.parseInt(val);
+								} else if(key.equals("VideoYPosition")){
+									Locals.VideoYPosition = Integer.parseInt(val);
+								} else if(key.equals("VideoXMargin")){
+									Locals.VideoXMargin = Integer.parseInt(val);
+								} else if(key.equals("VideoYMargin")){
+									Locals.VideoYMargin = Integer.parseInt(val);
+								} else if(key.equals("VideoXRatio")){
+									Locals.VideoXRatio = Integer.parseInt(val);
+								} else if(key.equals("VideoYRatio")){
+									Locals.VideoYRatio = Integer.parseInt(val);
+								} else if(key.equals("VideoDepthBpp")){
+									Locals.VideoDepthBpp = Integer.parseInt(val);
+								} else {
+									Log.w("Engine(Java)","[Settings.LoadLocals()] Unknown Key=" + key + " Value=" + val);
+								}
+							} catch(NumberFormatException ne){}
 						}
 					}
 				}
@@ -287,8 +249,6 @@ class Settings
 			if (isr != null) try { isr.close(); } catch (IOException e) {}
 			if (fis != null) try { fis.close(); } catch (IOException e) {}
 		}
-		
-		//
 		
 		boolean check;
 		
@@ -305,8 +265,7 @@ class Settings
 		localsSettingsLoaded = true;
 	}
 	
-	public static void SaveLocals( MainActivity activity )
-	{
+	public static void SaveLocals( MainActivity activity ) {
 		String path = Globals.CurrentDirectoryPath + "/" + LOCALS_SETTINGS_FILENAME;
 		
 		FileOutputStream   fos  = null;
@@ -351,7 +310,7 @@ class Settings
 			
 			bw.write("[Environment]");
 			bw.newLine();
-			for(Iterator it = Locals.EnvironmentMap.entrySet().iterator(); it.hasNext();) {
+			for(Iterator<Entry<String, String>> it = Locals.EnvironmentMap.entrySet().iterator(); it.hasNext();) {
 				HashMap.Entry<String,String> entry = (HashMap.Entry<String,String>)it.next();
 				String key = (String)entry.getKey();
 				String val = (String)entry.getValue();
@@ -389,10 +348,8 @@ class Settings
 		// TODO: get current user name and set envvar USER, the API is not availalbe on Android 1.6 so I don't bother with this
 	}
 	
-	public static void setKeymapKey(int javakey, int key)
-	{		
-		Globals.SDLKeyAdditionalKeyMap.put(new Integer(javakey), new Integer(key));
-		
+	public static void setKeymapKey(int javakey, int key) {		
+		Globals.SDLKeyAdditionalKeyMap.put(Integer.valueOf(javakey), Integer.valueOf(key));
 		nativeSetKeymapKey(javakey, key);
 	}
 

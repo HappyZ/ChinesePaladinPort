@@ -28,9 +28,6 @@ freely, subject to the following restrictions:
 package org.happyz.chinesepaladin;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import android.text.InputType;
 import android.app.Activity;
@@ -47,9 +44,6 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.ListView;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 import android.widget.Toast;
 import android.content.res.Configuration;
 import android.content.pm.ActivityInfo;
@@ -67,28 +61,28 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		// window feature
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
-		
+		// initiate the instance
 		instance = this;
-
+		// load global settings
 		Settings.LoadGlobals(this);
-		
-		if(Globals.APP_LAUNCHER_USE){
-			runAppLauncher();
-		} else {
-			runAppLaunchConfig();
-		}
+		// run configuration
+		runAppLaunchConfig();
 	}
-
-	public boolean checkCurrentDirectory(boolean quitting)
-	{
+	
+	/**
+	 * Check the validity of the directory
+	 * @param	quitting	boolean to determine whether quit the app or not if check failed
+	 * @return				directory is valid (true) or invalid (false)
+	 */
+	public boolean checkCurrentDirectory(boolean quitting) {
 		String curDirPath = Globals.CurrentDirectoryPath;
 		if(curDirPath != null && !curDirPath.equals("")){
-			Toast.makeText(instance, "Game Resources Loaded", Toast.LENGTH_SHORT).show();
+			Toast.makeText(instance, "Game Directory is Loaded", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		
@@ -116,9 +110,7 @@ public class MainActivity extends Activity {
 		return false;
 	}
 	
-	//
-	
-	private class AppLauncherView extends LinearLayout implements Button.OnClickListener, DialogInterface.OnClickListener, AdapterView.OnItemClickListener
+	/*private class AppLauncherView extends LinearLayout implements Button.OnClickListener, DialogInterface.OnClickListener, AdapterView.OnItemClickListener
 	{
 		private MainActivity mActivity;
 		
@@ -227,7 +219,7 @@ public class MainActivity extends Activity {
 		checkCurrentDirectory(false);
 		AppLauncherView view = new AppLauncherView(this);
 		setContentView(view);
-	}
+	}*/
 	
 	private class AppLaunchConfigView extends LinearLayout
 	{
@@ -236,7 +228,7 @@ public class MainActivity extends Activity {
 		ScrollView mConfView;
 		LinearLayout mConfLayout;
 
-		TextView mExecuteModuleText;
+		//TextView mExecuteModuleText;
 		TextView mVideoDepthText;
 		TextView mScreenRatioText;
 		TextView mScreenOrientationText;
@@ -682,21 +674,18 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public void runAppLaunchConfig()
-	{
-		if(!checkCurrentDirectory(true)){
-			return;
+	public void runAppLaunchConfig() {
+		if(checkCurrentDirectory(true)){
+			Settings.LoadLocals(this);
+			
+			if(!Locals.AppLaunchConfigUse){
+				runApp();
+				return;
+			}
+			
+			AppLaunchConfigView view = new AppLaunchConfigView(this);
+			setContentView(view);
 		}
-		
-		Settings.LoadLocals(this);
-		
-		if(!Locals.AppLaunchConfigUse){
-			runApp();
-			return;
-		}
-		
-		AppLaunchConfigView view = new AppLaunchConfigView(this);
-		setContentView(view);
 	}
 	
 	private boolean checkAppNeedFiles()
@@ -739,27 +728,25 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	public void runApp()
-	{
-		if(!checkCurrentDirectory(true)){
-			return;
+	public void runApp() {
+		if(checkCurrentDirectory(true)){
+		
+			Settings.LoadLocals(this);
+			
+			if(!checkAppNeedFiles()){
+				return;
+			}
+			
+			if(mView == null){
+				mView = new MainView(this);
+				setContentView(mView);
+			}
+			mView.setFocusableInTouchMode(true);
+			mView.setFocusable(true);
+			mView.requestFocus();
+			
+			System.gc();
 		}
-		
-		Settings.LoadLocals(this);
-		
-		if(!checkAppNeedFiles()){
-			return;
-		}
-		
-		if(mView == null){
-			mView = new MainView(this);
-			setContentView(mView);
-		}
-		mView.setFocusableInTouchMode(true);
-		mView.setFocusable(true);
-		mView.requestFocus();
-		
-		System.gc();
 	}
 	
     @Override

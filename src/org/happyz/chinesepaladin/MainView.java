@@ -940,9 +940,9 @@ public class MainView extends RelativeLayout {
 			int length = Globals.SDLKeyFunctionNameMap.size();
 			int[] keyArray = new int[length];
 			String[] nameArray = new String[length];
-			Iterator ite = Globals.SDLKeyFunctionNameMap.keySet().iterator();
+			Iterator<Integer> ite = Globals.SDLKeyFunctionNameMap.keySet().iterator();
 			for (int i = 0; i < length && ite.hasNext(); i++) {
-				Integer key = (Integer) ite.next();
+				Integer key = ite.next();
 				keyArray[i] = key.intValue();
 				nameArray[i] = Globals.SDLKeyFunctionNameMap.get(key);
 			}

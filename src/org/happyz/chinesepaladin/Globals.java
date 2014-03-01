@@ -47,7 +47,7 @@ class Globals {
 	//public static final String APP_VERSION = "";
 	//public static final String APP_ABOUT   = "";
 	
-	public static final boolean APP_LAUNCHER_USE = false;
+	//public static final boolean APP_LAUNCHER_USE = false;
 	
 	public static final boolean APP_CAN_RESUME = true;
 	
@@ -64,13 +64,13 @@ class Globals {
 		"abc.mkf",
 		"ball.mkf",
 		"data.mkf",
+		"f.mkf",
 		"fbp.mkf",
 		"fire.mkf",
-		"f.mkf",
 		"gop.mkf",
+		"m.msg",
 		"map.mkf",
 		"mgo.mkf",
-		"m.msg",
 		"mus.mkf",
 		"pat.mkf",
 		"rgm.mkf",
@@ -90,9 +90,8 @@ class Globals {
 	};
 	
 	//Current Directory Setting
-
 	public static final boolean CURRENT_DIRECTORY_NEED_WRITABLE = true;
-	public static final String CURRENT_DIRECTORY_PATH_TEMPLATE = "${MYPLACE}/ChinesePal";
+	public static final String CURRENT_DIRECTORY_PATH_TEMPLATE = "/data/ChinesePal";
 	
 	public static String CurrentDirectoryPathForLauncher = null;  //do not change
 	public static String CurrentDirectoryPath = null;             //do not change
@@ -300,88 +299,88 @@ class Globals {
 	//Key Setting
 	public static TreeMap<Integer,String> SDLKeyFunctionNameMap = new TreeMap<Integer,String>(); //do not change
 	static {
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN), "None");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN), "None");
 		
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_UP), "Up");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_DOWN), "Down");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_LEFT), "Left");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_RIGHT), "Right");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_UP), "Up");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_DOWN), "Down");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_LEFT), "Left");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_RIGHT), "Right");
 		
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_RETURN), "Enter");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_ESCAPE), "Cancel");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_a), "A");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_e), "E");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_f), "F");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_q), "Q");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_r), "R");
-		SDLKeyFunctionNameMap.put(new Integer(SDL_1_2_Keycodes.SDLK_w), "W");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_RETURN), "Enter");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_ESCAPE), "Cancel");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_a), "A");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_e), "E");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_f), "F");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_q), "Q");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_r), "R");
+		SDLKeyFunctionNameMap.put(Integer.valueOf(SDL_1_2_Keycodes.SDLK_w), "W");
 	}
 	
 	public static TreeMap<Integer,Integer> SDLKeyAdditionalKeyMap = new TreeMap<Integer,Integer>(); //do not change
 	static {
 		//Menu
-		/* SDLKeyAdditionalKeyMap.put(new Integer(MENU_KEY_ARRAY[0]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(MENU_KEY_ARRAY[1]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN)); */
+		/* SDLKeyAdditionalKeyMap.put(Integer.valueOf(MENU_KEY_ARRAY[0]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(MENU_KEY_ARRAY[1]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN)); */
 
 		//SubMenu
-		/* SDLKeyAdditionalKeyMap.put(new Integer(SUBMENU_KEY_ARRAY[0]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(SUBMENU_KEY_ARRAY[1]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(SUBMENU_KEY_ARRAY[2]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(SUBMENU_KEY_ARRAY[3]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN)); */
+		/* SDLKeyAdditionalKeyMap.put(Integer.valueOf(SUBMENU_KEY_ARRAY[0]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(SUBMENU_KEY_ARRAY[1]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(SUBMENU_KEY_ARRAY[2]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(SUBMENU_KEY_ARRAY[3]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN)); */
 
 		//Button
-		/* SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_LEFT_KEY_ARRAY[0]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_LEFT_KEY_ARRAY[1]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_LEFT_KEY_ARRAY[2]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_LEFT_KEY_ARRAY[3]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_LEFT_KEY_ARRAY[4]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_LEFT_KEY_ARRAY[5]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		/* SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_LEFT_KEY_ARRAY[0]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_LEFT_KEY_ARRAY[1]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_LEFT_KEY_ARRAY[2]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_LEFT_KEY_ARRAY[3]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_LEFT_KEY_ARRAY[4]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_LEFT_KEY_ARRAY[5]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
 		
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_RIGHT_KEY_ARRAY[0]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_RIGHT_KEY_ARRAY[1]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_RIGHT_KEY_ARRAY[2]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_RIGHT_KEY_ARRAY[3]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_RIGHT_KEY_ARRAY[4]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_RIGHT_KEY_ARRAY[5]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_RIGHT_KEY_ARRAY[0]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_RIGHT_KEY_ARRAY[1]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_RIGHT_KEY_ARRAY[2]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_RIGHT_KEY_ARRAY[3]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_RIGHT_KEY_ARRAY[4]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_RIGHT_KEY_ARRAY[5]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
 		
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_TOP_KEY_ARRAY[0]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_TOP_KEY_ARRAY[1]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_TOP_KEY_ARRAY[2]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_TOP_KEY_ARRAY[3]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_TOP_KEY_ARRAY[4]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_TOP_KEY_ARRAY[5]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_TOP_KEY_ARRAY[0]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_TOP_KEY_ARRAY[1]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_TOP_KEY_ARRAY[2]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_TOP_KEY_ARRAY[3]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_TOP_KEY_ARRAY[4]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_TOP_KEY_ARRAY[5]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
 		
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_BOTTOM_KEY_ARRAY[0]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_BOTTOM_KEY_ARRAY[1]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_BOTTOM_KEY_ARRAY[2]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_BOTTOM_KEY_ARRAY[3]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_BOTTOM_KEY_ARRAY[4]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(BUTTON_BOTTOM_KEY_ARRAY[5]), new Integer(SDL_1_2_Keycodes.SDLK_UNKNOWN)); */
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_BOTTOM_KEY_ARRAY[0]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_BOTTOM_KEY_ARRAY[1]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_BOTTOM_KEY_ARRAY[2]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_BOTTOM_KEY_ARRAY[3]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_BOTTOM_KEY_ARRAY[4]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(BUTTON_BOTTOM_KEY_ARRAY[5]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_UNKNOWN)); */
 
 		// GamePad (Touch)
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_UP_INDEX]),    new Integer(SDL_1_2_Keycodes.SDLK_UP));
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_RIGHT_INDEX]), new Integer(SDL_1_2_Keycodes.SDLK_RIGHT));
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_DOWN_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_DOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_LEFT_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_LEFT));		
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_UP_INDEX]),    Integer.valueOf(SDL_1_2_Keycodes.SDLK_UP));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_RIGHT_INDEX]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_RIGHT));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_DOWN_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_DOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ARROW_KEY_ARRAY[GAMEPAD_BUTTON_ARROW_LEFT_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_LEFT));		
 		
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_UP_INDEX]),    new Integer(SDL_1_2_Keycodes.SDLK_r));
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_RIGHT_INDEX]), new Integer(SDL_1_2_Keycodes.SDLK_RETURN));
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_LEFT_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_e));
-		SDLKeyAdditionalKeyMap.put(new Integer(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_DOWN_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_ESCAPE));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_UP_INDEX]),    Integer.valueOf(SDL_1_2_Keycodes.SDLK_r));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_RIGHT_INDEX]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_RETURN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_LEFT_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_e));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(GAMEPAD_BUTTON_ACTION_KEY_ARRAY[GAMEPAD_BUTTON_ACTION_DOWN_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_ESCAPE));
 		
 		// JoyStick Axis
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_UP_INDEX]),    new Integer(SDL_1_2_Keycodes.SDLK_UP));
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_RIGHT_INDEX]), new Integer(SDL_1_2_Keycodes.SDLK_RIGHT));
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_DOWN_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_DOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_LEFT_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_LEFT));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_UP_INDEX]),    Integer.valueOf(SDL_1_2_Keycodes.SDLK_UP));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_RIGHT_INDEX]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_RIGHT));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_DOWN_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_DOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXIS_KEY_ARRAY[JOYSTICK_AXIS_LEFT_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_LEFT));
 		
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_UP_INDEX]),    new Integer(SDL_1_2_Keycodes.SDLK_UP));
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_RIGHT_INDEX]), new Integer(SDL_1_2_Keycodes.SDLK_RIGHT));
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_DOWN_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_DOWN));
-		SDLKeyAdditionalKeyMap.put(new Integer(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_LEFT_INDEX]),  new Integer(SDL_1_2_Keycodes.SDLK_LEFT));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_UP_INDEX]),    Integer.valueOf(SDL_1_2_Keycodes.SDLK_UP));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_RIGHT_INDEX]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_RIGHT));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_DOWN_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_DOWN));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_LEFT_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_LEFT));
 		
 		//Key
-		SDLKeyAdditionalKeyMap.put(new Integer(KeyEvent.KEYCODE_BACK), new Integer(SDL_1_2_Keycodes.SDLK_ESCAPE));
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(KeyEvent.KEYCODE_BACK), Integer.valueOf(SDL_1_2_Keycodes.SDLK_ESCAPE));
 	}
 	
 	//Run Static Initializer

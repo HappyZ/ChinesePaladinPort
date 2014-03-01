@@ -49,6 +49,9 @@ obj/local/armeabi-v7a/objs/sdl-1.2_jni/src \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/libmad \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/adplug \
+obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports \
+obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/libmad \
+obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/adplug \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/libmad \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/adplug \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/__ \
