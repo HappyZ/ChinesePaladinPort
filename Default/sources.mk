@@ -23,10 +23,10 @@ C_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-stuff \
-stuff/native_midi \
-stuff/libmad \
-stuff/adplug \
+sdlports \
+sdlports/native_midi \
+sdlports/libmad \
+sdlports/adplug \
 obj/local/armeabi-v7a/objs/sdl_main_jni \
 obj/local/armeabi-v7a/objs/sdl-1.2_jni/src/video/android \
 obj/local/armeabi-v7a/objs/sdl-1.2_jni/src/video \
@@ -76,4 +76,8 @@ jni/sdl-1.2_jni/src/cdrom \
 jni/sdl-1.2_jni/src/audio/android \
 jni/sdl-1.2_jni/src/audio \
 jni/sdl-1.2_jni/src \
+a \
+a/native_midi \
+a/libmad \
+a/adplug \
 

@@ -8,10 +8,10 @@ RM := del
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include stuff/native_midi/subdir.mk
--include stuff/libmad/subdir.mk
--include stuff/adplug/subdir.mk
--include stuff/subdir.mk
+-include sdlports/native_midi/subdir.mk
+-include sdlports/libmad/subdir.mk
+-include sdlports/adplug/subdir.mk
+-include sdlports/subdir.mk
 -include obj/local/armeabi-v7a/objs/sdl_main_jni/subdir.mk
 -include obj/local/armeabi-v7a/objs/sdl-1.2_jni/src/video/android/subdir.mk
 -include obj/local/armeabi-v7a/objs/sdl-1.2_jni/src/video/subdir.mk
@@ -61,6 +61,10 @@ RM := del
 -include jni/sdl-1.2_jni/src/audio/android/subdir.mk
 -include jni/sdl-1.2_jni/src/audio/subdir.mk
 -include jni/sdl-1.2_jni/src/subdir.mk
+-include a/native_midi/subdir.mk
+-include a/libmad/subdir.mk
+-include a/adplug/subdir.mk
+-include a/subdir.mk
 -include subdir.mk
 -include objects.mk
 

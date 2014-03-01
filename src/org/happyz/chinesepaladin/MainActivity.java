@@ -75,6 +75,85 @@ public class MainActivity extends Activity {
 	}
 	
 	/**
+	 * Configuration Screen
+	 */
+	public void runAppLaunchConfig() {
+		if(checkCurrentDirectory(true)){
+			Settings.LoadLocals(this); // load local settings
+			if(!Locals.AppLaunchConfigUse){
+				runApp();
+			}else{
+				AppLaunchConfigView view = new AppLaunchConfigView(this);
+				setContentView(view);
+			}
+		}
+	}
+
+	/**
+	 * File Check
+	 */
+	private boolean checkAppNeedFiles()
+	{
+		String missingFileNames = "";
+		int missingCount = 0;
+		for(String fileName : Globals.APP_NEED_FILENAME_ARRAY){
+			String[] itemNameArray = fileName.split("\\|");
+			boolean flag = false;
+			for(String itemName : itemNameArray){
+				File file = new File(Globals.CurrentDirectoryPath + "/" + itemName.trim());
+				if(file.exists() && file.canRead()){
+					flag = true;
+					break;
+				}
+			}
+			if(!flag){
+				missingCount ++;
+				missingFileNames += "File " + missingCount + ": " + fileName.replace("|"," or ") + "\n";
+			}
+		}
+		if(missingCount != 0){
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+			alertDialogBuilder.setTitle(getResources().getString(R.string.error));
+			alertDialogBuilder.setMessage(getResources().getString(R.string.missing_file) + "\n" + missingFileNames);
+		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.download), new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int whichButton) {
+					// TODO: implement the download feature
+					Toast.makeText(instance, "not implemented", Toast.LENGTH_LONG).show();
+					finish();
+				}
+			}).setNegativeButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int whichButton) {
+					finish();
+				}
+			});
+			alertDialogBuilder.setCancelable(false);
+			AlertDialog alertDialog = alertDialogBuilder.create();
+			alertDialog.show();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Run the app
+	 */
+	public void runApp() {
+		if(checkCurrentDirectory(true)){
+			Settings.LoadLocals(this); // load local settings
+			if(checkAppNeedFiles()){
+				if(mView == null){
+					mView = new MainView(this);
+					setContentView(mView);
+				}
+				mView.setFocusableInTouchMode(true);
+				mView.setFocusable(true);
+				mView.requestFocus();
+				System.gc();
+			}
+		}
+	}
+	
+	/**
 	 * Check the validity of the directory
 	 * @param	quitting	boolean to determine whether quit the app or not if check failed
 	 * @return				directory is valid (true) or invalid (false)
@@ -92,6 +171,7 @@ public class MainActivity extends Activity {
 		if(quitting){
 		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.download), new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton) {
+					// TODO: implement the download feature
 					Toast.makeText(instance, "not implemented", Toast.LENGTH_LONG).show();
 					finish();
 				}
@@ -671,81 +751,6 @@ public class MainActivity extends Activity {
 				
 				addView(runLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT) );
 			}
-		}
-	}
-	
-	public void runAppLaunchConfig() {
-		if(checkCurrentDirectory(true)){
-			Settings.LoadLocals(this);
-			
-			if(!Locals.AppLaunchConfigUse){
-				runApp();
-				return;
-			}
-			
-			AppLaunchConfigView view = new AppLaunchConfigView(this);
-			setContentView(view);
-		}
-	}
-	
-	private boolean checkAppNeedFiles()
-	{
-		String missingFileNames = "";
-		int missingCount = 0;
-		
-		for(String fileName : Globals.APP_NEED_FILENAME_ARRAY){
-			String[] itemNameArray = fileName.split("\\|");
-			boolean flag = false;
-			for(String itemName : itemNameArray){
-				File file = new File(Globals.CurrentDirectoryPath + "/" + itemName.trim());
-				if(file.exists() && file.canRead()){
-					flag = true;
-					break;
-				}
-			}
-			if(!flag){
-				missingCount ++;
-				missingFileNames += "[" + missingCount + "]" + fileName.replace("|"," or ") + "\n";
-			}
-		}
-		
-		if(!missingFileNames.equals("")){
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-			alertDialogBuilder.setTitle(getResources().getString(R.string.error));
-			alertDialogBuilder.setMessage(getResources().getString(R.string.following) + " " + missingCount + " " + getResources().getString(R.string.missing_file) + "\n" + missingFileNames);
-			alertDialogBuilder.setPositiveButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int whichButton) {
-					finish();
-				}
-			});
-			alertDialogBuilder.setCancelable(false);
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public void runApp() {
-		if(checkCurrentDirectory(true)){
-		
-			Settings.LoadLocals(this);
-			
-			if(!checkAppNeedFiles()){
-				return;
-			}
-			
-			if(mView == null){
-				mView = new MainView(this);
-				setContentView(mView);
-			}
-			mView.setFocusableInTouchMode(true);
-			mView.setFocusable(true);
-			mView.requestFocus();
-			
-			System.gc();
 		}
 	}
 	
