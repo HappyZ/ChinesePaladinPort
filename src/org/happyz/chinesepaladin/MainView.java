@@ -178,7 +178,6 @@ public class MainView extends RelativeLayout {
 	@Override
 	public boolean onKeyDown(int keyCode, final KeyEvent event) {
 		// Log.i("Event", "keyDown : " + keyCode);
-
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_VOLUME_UP:
 		case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -188,6 +187,7 @@ public class MainView extends RelativeLayout {
 			if (!mIsKeyConfigMode) {
 				return super.onKeyDown(keyCode, event);
 			}
+			break;
 		case KeyEvent.KEYCODE_BACK:
 		default:
 			if (mTouchMode != null) {
@@ -195,7 +195,6 @@ public class MainView extends RelativeLayout {
 			}
 			break;
 		}
-
 		return true;
 	}
 
@@ -887,17 +886,11 @@ public class MainView extends RelativeLayout {
 		 * mActivity.setRequestedOrientation(
 		 * ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ); } }
 		 */
-		 Display display = ((WindowManager) mActivity
-					.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
-		if (  Integer.valueOf(android.os.Build.VERSION.SDK_INT) < 13 ){
-			 mDisplayWidth = display.getWidth();
-			 mDisplayHeight = display.getHeight();
-		}else{
-			Point size = new Point();
-            display.getSize(size);
-            mDisplayWidth = size.x;
-            mDisplayHeight = size.y;
-		}
+		 Display display = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
+		 Point size = new Point();
+		 display.getSize(size);
+		 mDisplayWidth = size.x;
+		 mDisplayHeight = size.y;
 	}
 
 	public int getDisplayWidth() {
@@ -1069,7 +1062,7 @@ abstract class DimSystemStatusBar {
 			 * hiddenStatusCode = android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE;
 			 * }
 			 */
-			view.setSystemUiVisibility(android.view.View.STATUS_BAR_HIDDEN);
+			//view.setSystemUiVisibility(android.view.View.STATUS_BAR_HIDDEN);
 		}
 	}
 

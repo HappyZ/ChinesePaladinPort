@@ -27,13 +27,20 @@ freely, subject to the following restrictions:
 
 package org.happyz.chinesepaladin;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
-
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import android.text.InputType;
+import android.util.Log;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View;
@@ -45,13 +52,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
-import android.content.res.Configuration;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.graphics.Color;
 import android.widget.CheckBox;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
 	
 	public static MainActivity instance = null;
 	public static MainView mView = null;
@@ -83,8 +89,9 @@ public class MainActivity extends Activity {
 			if(!Locals.AppLaunchConfigUse){
 				runApp();
 			}else{
-				AppLaunchConfigView view = new AppLaunchConfigView(this);
-				setContentView(view);
+				//AppLaunchConfigView view = new AppLaunchConfigView(this);
+				setContentView(R.layout.cp_config);
+				initialConfigView();
 			}
 		}
 	}
@@ -92,8 +99,7 @@ public class MainActivity extends Activity {
 	/**
 	 * File Check
 	 */
-	private boolean checkAppNeedFiles()
-	{
+	private boolean checkAppNeedFiles() {
 		String missingFileNames = "";
 		int missingCount = 0;
 		for(String fileName : Globals.APP_NEED_FILENAME_ARRAY){
@@ -115,11 +121,10 @@ public class MainActivity extends Activity {
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 			alertDialogBuilder.setTitle(getResources().getString(R.string.error));
 			alertDialogBuilder.setMessage(getResources().getString(R.string.missing_file) + "\n" + missingFileNames);
-		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.download), new DialogInterface.OnClickListener(){
+		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.fixit), new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton) {
-					// TODO: implement the download feature
-					Toast.makeText(instance, "not implemented", Toast.LENGTH_LONG).show();
-					finish();
+				    Toast.makeText(instance, R.string.unziping, Toast.LENGTH_SHORT).show();
+					unZipFile();
 				}
 			}).setNegativeButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton) {
@@ -152,6 +157,54 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
+
+	private void unZipFile(){
+		String dirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE + "/";
+		File dir = new File(dirPath);
+		try{
+			if (!dir.exists()) dir.mkdir();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		int size = 4096;
+		String strEntry;
+		try{
+			BufferedOutputStream dest = null; 
+			InputStream fis = instance.getResources().openRawResource(R.raw.cp);
+			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				try {
+					Log.i("Unzip: ","="+ entry);
+					int count; 
+					byte data[] = new byte[size];
+					strEntry = entry.getName();
+
+					File entryFile = new File(dirPath + strEntry);
+					File entryDir = new File(entryFile.getParent());
+					if (!entryDir.exists()) {
+						entryDir.mkdirs();
+					}
+					if (!entryFile.exists()){
+						FileOutputStream fos = new FileOutputStream(entryFile);
+						dest = new BufferedOutputStream(fos, size);
+						while ((count = zis.read(data, 0, size)) != -1) {
+							dest.write(data, 0, count);
+						}
+						dest.flush();
+						dest.close();
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			zis.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	    finish();
+	}
+	
 	
 	/**
 	 * Check the validity of the directory
@@ -169,11 +222,10 @@ public class MainActivity extends Activity {
 		alertDialogBuilder.setTitle(getResources().getString(R.string.error));
 		alertDialogBuilder.setMessage(getResources().getString(R.string.open_dir_error));
 		if(quitting){
-		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.download), new DialogInterface.OnClickListener(){
+		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.fixit), new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton) {
-					// TODO: implement the download feature
-					Toast.makeText(instance, "not implemented", Toast.LENGTH_LONG).show();
-					finish();
+					Toast.makeText(instance, R.string.unziping, Toast.LENGTH_SHORT).show();
+					unZipFile();
 				}
 			}).setNegativeButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton) {
@@ -190,119 +242,25 @@ public class MainActivity extends Activity {
 		return false;
 	}
 	
-	/*private class AppLauncherView extends LinearLayout implements Button.OnClickListener, DialogInterface.OnClickListener, AdapterView.OnItemClickListener
-	{
-		private MainActivity mActivity;
+	public void onClick(View arg) {
+		switch (arg.getId()) {
 		
-		private LinearLayout mCurDirLayout;
-		private TextView mCurDirText;
-		private Button mCurDirChgButton;
-		private ListView mDirListView;
-		
-		private File [] mDirFileArray;
-		
-		public AppLauncherView(MainActivity activity)
-		{
-			super(activity);
-			mActivity = activity;
+		default:
 			
-			setOrientation(LinearLayout.VERTICAL);
-			{
-				mCurDirLayout = new LinearLayout(mActivity);
-				{
-					LinearLayout txtLayout = new LinearLayout(mActivity);
-					txtLayout.setOrientation(LinearLayout.VERTICAL);
-					{
-						TextView txt1 = new TextView(mActivity);
-						txt1.setTextSize(18.0f);
-						txt1.setText(getResources().getString(R.string.current_dir));
-						txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						
-						mCurDirText = new TextView(mActivity);
-						mCurDirText.setPadding(5, 0, 0, 0);
-						txtLayout.addView(mCurDirText, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-					}
-					mCurDirLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
-					
-					mCurDirChgButton = new Button(mActivity);
-					mCurDirChgButton.setText(getResources().getString(R.string.change_dir));
-					mCurDirChgButton.setOnClickListener(this);
-					mCurDirLayout.addView(mCurDirChgButton, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
-				}
-				addView(mCurDirLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-				mDirListView = new ListView(mActivity);
-				mDirListView.setOnItemClickListener(this);
-				addView(mDirListView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1) );
-			}
-			
-			loadCurrentDirectory();
-		}
-		
-		public void loadCurrentDirectory()
-		{
-			if(Globals.CurrentDirectoryPathForLauncher == null || Globals.CurrentDirectoryPathForLauncher.equals("")){
-				mCurDirText.setText("");
-			} else {
-				mCurDirText.setText(Globals.CurrentDirectoryPathForLauncher);
-
-				try {
-					File searchDirFile = new File(Globals.CurrentDirectoryPathForLauncher);
-				
-					mDirFileArray = searchDirFile.listFiles(new FileFilter() {
-						public boolean accept(File file) {
-							return (!file.isHidden() && file.isDirectory() && file.canRead() && (!Globals.CURRENT_DIRECTORY_NEED_WRITABLE || file.canWrite()));
-						}
-					});
-					
-					Arrays.sort(mDirFileArray, new Comparator<File>(){
-						public int compare(File src, File target){
-							return src.getName().compareTo(target.getName());
-						}
-					});
-				
-					String[] dirPathArray = new String[mDirFileArray.length];
-					for(int i = 0; i < mDirFileArray.length; i ++){
-						dirPathArray[i] = mDirFileArray[i].getName();
-					}
-
-					ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, dirPathArray);
-					mDirListView.setAdapter(arrayAdapter);
-				} catch(Exception e){
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-					alertDialogBuilder.setTitle(getResources().getString(R.string.error));
-					alertDialogBuilder.setMessage(getResources().getString(R.string.open_dir_error) + "\n" + Globals.CurrentDirectoryPathForLauncher);
-					alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok), null);
-					AlertDialog alertDialog = alertDialogBuilder.create();
-					alertDialog.show();
-					
-					ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, new String[0]);
-					mDirListView.setAdapter(arrayAdapter);
-				}
-			}
-		}
-		
-		public void onClick(View v)
-		{
-		}
-		
-		public void onClick(DialogInterface dialog, int which)
-		{
-		}
-		public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-		{
 		}
 	}
 	
-	public void runAppLauncher()
-	{
-		checkCurrentDirectory(false);
-		AppLauncherView view = new AppLauncherView(this);
-		setContentView(view);
-	}*/
+	/**
+	 * Initialize the Configuration View
+	 */
+	private void initialConfigView(){
+		
+	}
 	
-	private class AppLaunchConfigView extends LinearLayout
-	{
+	/**
+	 * Configuration View
+	 */
+	private class AppLaunchConfigView extends LinearLayout {
 		MainActivity mActivity;
 
 		ScrollView mConfView;
@@ -318,11 +276,10 @@ public class MainActivity extends Activity {
 		
 		Button mRunButton;
 		
-		public AppLaunchConfigView(MainActivity activity)
-		{
+		public AppLaunchConfigView(MainActivity activity) {
 			super(activity);
 			mActivity = activity;
-			
+			// Orientation: default vertical
 			setOrientation(LinearLayout.VERTICAL);
 			{
 				mConfView = new ScrollView(mActivity);
@@ -755,14 +712,12 @@ public class MainActivity extends Activity {
 	}
 	
     @Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		return true;
 	}
 	
     @Override
-	public boolean onPrepareOptionsMenu( Menu menu )
-	{
+	public boolean onPrepareOptionsMenu( Menu menu ) {
 		if(mView != null){
 			return mView.onPrepareOptionsMenu(menu);
 		}
@@ -770,8 +725,7 @@ public class MainActivity extends Activity {
 	}
 	
     @Override
-	public boolean onOptionsItemSelected( MenuItem item )
-	{
+	public boolean onOptionsItemSelected( MenuItem item ) {
 		if(mView != null){
 			return mView.onOptionsItemSelected(item);
 		}
@@ -788,7 +742,6 @@ public class MainActivity extends Activity {
 				} catch(InterruptedException e){}
 			}
 		}
-		
 		_isPaused = true;
 		if( mView != null )
 			mView.onPause();
@@ -806,8 +759,7 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	protected void onDestroy() 
-	{
+	protected void onDestroy()  {
 		if( mView != null ){
 			mView.exitApp();
 			try {
@@ -817,12 +769,11 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 		System.exit(0);
 	}
-
+/*
 	@Override
-	public void onConfigurationChanged(Configuration newConfig)
-	{
+	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		// Do nothing here
-	}
+	}*/
 }
 

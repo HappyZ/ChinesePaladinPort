@@ -56,21 +56,12 @@ class Settings {
 	 * Globally setup the directory
 	 */
 	private static void setupCurrentDirectory() {
-		/*if(Globals.CurrentDirectoryPathForLauncher != null && !Globals.CurrentDirectoryPathForLauncher.equals("")){
-			File curDirFile = new File(Globals.CurrentDirectoryPathForLauncher);
-			if(!curDirFile.exists() || !curDirFile.isDirectory() || !curDirFile.canRead()){
-				Globals.CurrentDirectoryPathForLauncher = null;
-			}
-		}*/
 		// reinitialize the directory path
 		Globals.CurrentDirectoryPath = null;
 		String curDirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;
 		File curDirFile = new File(curDirPath);
 		if(curDirFile.exists() && curDirFile.isDirectory() && curDirFile.canRead() && (!Globals.CURRENT_DIRECTORY_NEED_WRITABLE || curDirFile.canWrite())){
 			String path = curDirFile.getAbsolutePath();
-			/*if(Globals.CurrentDirectoryPathForLauncher == null || Globals.CurrentDirectoryPathForLauncher.equals("")){
-				Globals.CurrentDirectoryPathForLauncher = path;
-			}*/
 			if(Globals.CurrentDirectoryPath == null || Globals.CurrentDirectoryPath.equals("")){
 				Globals.CurrentDirectoryPath = path;
 			}

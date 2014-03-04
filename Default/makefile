@@ -34,6 +34,9 @@ RM := del
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/libmad/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/adplug/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/subdir.mk
+-include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/sdlports/libmad/subdir.mk
+-include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/sdlports/adplug/subdir.mk
+-include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/sdlports/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/libmad/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/adplug/subdir.mk
 -include obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/subdir.mk
@@ -61,10 +64,6 @@ RM := del
 -include jni/sdl-1.2_jni/src/audio/android/subdir.mk
 -include jni/sdl-1.2_jni/src/audio/subdir.mk
 -include jni/sdl-1.2_jni/src/subdir.mk
--include a/native_midi/subdir.mk
--include a/libmad/subdir.mk
--include a/adplug/subdir.mk
--include a/subdir.mk
 -include subdir.mk
 -include objects.mk
 

@@ -165,10 +165,10 @@ static SDL_mutex * BufferedEventsMutex = NULL;
 #define SDL_ANDROID_BUFFERED_EVENT_RESIZE_WINDOW		(SDL_USEREVENT+1)
 #define SDL_ANDROID_BUFFERED_EVENT_RESIZE_FAKEWINDOW	(SDL_USEREVENT+2)
 
-static int sWindowWidthForMotion  = 0;
-static int sWindowHeightForMotion = 0;
-static int sFakeWindowWidthForMotion  = 0;
-static int sFakeWindowHeightForMotion = 0;
+//static int sWindowWidthForMotion  = 0;
+//static int sWindowHeightForMotion = 0;
+//static int sFakeWindowWidthForMotion  = 0;
+//static int sFakeWindowHeightForMotion = 0;
 
 extern void SDL_ANDROID_PumpEvents()
 {

@@ -6,7 +6,6 @@ package org.happyz.chinesepaladin;
 
 import android.content.Context;
 import android.view.MotionEvent;
-import android.view.KeyEvent;
 
 import java.lang.String;
 
@@ -20,19 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-class TouchMode implements DifferentTouchInput.OnInputEventListener
-{
-	public static TouchMode getTouchMode(String name, MainView mainView)
-	{
-		if(name.equals("Touch")){
-			return new TouchTouchMode(mainView);
-		}
-		if(name.equals("TrackPad")){
-			return new TrackPadTouchMode(mainView);
-		}
-		if(name.equals("GamePad")){
-			return new GamePadTouchMode(mainView);
-		}
+class TouchMode implements DifferentTouchInput.OnInputEventListener {
+	public static TouchMode getTouchMode(String name, MainView mainView) {
+		if(name.equals("Touch")) return new TouchTouchMode(mainView);
+		if(name.equals("TrackPad")) return new TrackPadTouchMode(mainView);
+		if(name.equals("GamePad")) return new GamePadTouchMode(mainView);
 		return new InvalidTouchMode(mainView);
 	}
 	
@@ -58,13 +49,11 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 
 	private MainView mMainView = null;
 	
-	private class OnButtonTouchListener implements View.OnTouchListener
-	{
+	private class OnButtonTouchListener implements View.OnTouchListener {
 		//private MainView mMainView;
 		private int mKey;
 		
-		public OnButtonTouchListener(MainView mainView, int key)
-		{
+		public OnButtonTouchListener(MainView mainView, int key) {
 			//mMainView = mainView;
 			mKey = key;
 		}
@@ -83,16 +72,14 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 		}
 	}
 	
-	private Button newButtonToLayout(LinearLayout layout, int key)
-	{
+	private Button newButtonToLayout(LinearLayout layout, int key) {
 		Button button = new Button(mMainView.getActivity());
 		button.setOnTouchListener(new OnButtonTouchListener(mMainView, key));
 		layout.addView(button, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 		return button;
 	}
 	
-	public TouchMode(MainView mainView)
-	{
+	public TouchMode(MainView mainView) {
 		mMainView = mainView;
 		mLayoutLeft = new LinearLayout(mMainView.getActivity());
 		mLayoutLeft.setOrientation(LinearLayout.VERTICAL);
@@ -125,43 +112,35 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 		}
 	}
 	
-	protected MainView getMainView()
-	{
+	protected MainView getMainView() {
 		return mMainView;
 	}
 	
-	protected void setXMargin(int margin)
-	{
+	protected void setXMargin(int margin) {
 		mXMargin = margin;
 	}
 	
-	protected void setYMargin(int margin)
-	{
+	protected void setYMargin(int margin) {
 		mYMargin = margin;
 	}
 	
-	protected int getScreenX()
-	{
+	protected int getScreenX() {
 		return mScreenX;
 	}
 	
-	protected int getScreenY()
-	{
+	protected int getScreenY() {
 		return mScreenY;
 	}
 	
-	protected int getScreenWidth()
-	{
+	protected int getScreenWidth() {
 		return mScreenWidth;
 	}
 	
-	protected int getScreenHeight()
-	{
+	protected int getScreenHeight() {
 		return mScreenHeight;
 	}
 	
-	void setup()
-	{
+	void setup() {
 		mMainView.setMouseCursorRGB(0, 0, 0, 255, 255, 255);
 
 		mMainView.addView(mLayoutLeft);
@@ -170,8 +149,7 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 		mMainView.addView(mLayoutBottom);
 	}
 	
-	void cleanup()
-	{
+	void cleanup() {
 		mMainView.removeView(mLayoutLeft);
 		mMainView.removeView(mLayoutRight);
 		mMainView.removeView(mLayoutTop);
@@ -181,8 +159,7 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 	}
 	
 	@SuppressWarnings("unused")
-	void update()
-	{
+	void update() {
 		int i;
 		
 		int xnum = (Globals.BUTTON_USE && Globals.ButtonLeftEnabled ? 1 : 0) + (Globals.BUTTON_USE && Globals.ButtonRightEnabled ? 1 : 0) + mXMargin + Locals.VideoXMargin;
@@ -235,7 +212,7 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 				mButtonRightArray[i].setVisibility(View.VISIBLE);
 				
 				String name = null;
-				Integer sdlKey = (Integer)Globals.SDLKeyAdditionalKeyMap.get(Integer.valueOf(Globals.BUTTON_RIGHT_KEY_ARRAY[i]));
+				Integer sdlKey = Globals.SDLKeyAdditionalKeyMap.get(Integer.valueOf(Globals.BUTTON_RIGHT_KEY_ARRAY[i]));
 				if(sdlKey != null){
 					name = Globals.SDLKeyFunctionNameMap.get(sdlKey);
 				}
@@ -302,8 +279,6 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 			mLayoutBottom.setVisibility(View.GONE);
 		}
 		
-		//
-		
 		int x;
 		int y;
 		
@@ -325,85 +300,56 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener
 		getMainView().setGLViewPos(x, y);
 	}
 	
-	public void onKeyEvent(int keyCode, int pressed)
-	{
-	}
+	public void onKeyEvent(int keyCode, int pressed){}
 	
-	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount)
-	{
-	}
+	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount){}
 	
-	public void onMouseButtonEvent(int buttonId, int pressed)
-	{
-	}
+	public void onMouseButtonEvent(int buttonId, int pressed){}
 }
 
-class InvalidTouchMode extends TouchMode
-{
+class InvalidTouchMode extends TouchMode {
 	private boolean mIsMouseShowed = true;
 	
-	public InvalidTouchMode(MainView mainView)
-	{
+	public InvalidTouchMode(MainView mainView) {
 		super(mainView);
 	}
 	
 	@Override
-	void setup()
-	{
+	void setup() {
 		super.setup();
-		
 		mIsMouseShowed = getMainView().isMouseCursorShowed();
 		getMainView().showMouseCursor(false);
 	}
 	
 	@Override
-	void cleanup()
-	{
+	void cleanup() {
 		if(!getMainView().isMouseCursorShowed()){
 			getMainView().showMouseCursor(mIsMouseShowed);
 		}
-		
 		super.cleanup();
 	}
 	
 	@Override
-	public void onKeyEvent(int keyCode, int pressed)
-	{
+	public void onKeyEvent(int keyCode, int pressed) {
 		getMainView().nativeKey( keyCode, pressed );
 	}
 }
 
-class TouchTouchMode extends TouchMode
-{
+class TouchTouchMode extends TouchMode {
 	private int mFirstPointerId = -1;
 	private boolean mRightClickMode = false;
 
-	public TouchTouchMode(MainView mainView)
-	{
+	public TouchTouchMode(MainView mainView) {
 		super(mainView);
 	}
 	
 	@Override
-	public void onKeyEvent(int keyCode, int pressed)
-	{
-		if(keyCode == KeyEvent.KEYCODE_BACK){
-			if(pressed == 0){
-				if(!mRightClickMode){
-					mRightClickMode = true;
-					getMainView().setMouseCursorRGB(255, 255, 255, 0, 0, 0);
-				} else {
-					mRightClickMode = false;
-					getMainView().setMouseCursorRGB(0, 0, 0, 255, 255, 255);
-				}
-			}
-		} else {
-			getMainView().nativeKey( keyCode, pressed );
-		}
+	public void onKeyEvent(int keyCode, int pressed) {
+		getMainView().nativeKey( keyCode, pressed );
 	}
 	
 	@Override
-	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount)
-	{
+	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
 		if(mFirstPointerId < 0 && touchCount == 1 && action == Mouse.SDL_FINGER_DOWN){
 			mFirstPointerId = pointerId;
 		}
@@ -430,8 +376,7 @@ class TouchTouchMode extends TouchMode
 	}
 
 	@Override
-	public void onMouseButtonEvent(int buttonId, int pressed)
-	{
+	public void onMouseButtonEvent(int buttonId, int pressed) {
 		getMainView().nativeMouseButtonsPressed( (mRightClickMode ? MotionEvent.BUTTON_SECONDARY : buttonId), pressed );
 		if(pressed == 0){
 			mRightClickMode = false;
@@ -440,8 +385,7 @@ class TouchTouchMode extends TouchMode
 	}
 }
 
-class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
-{
+class TrackPadTouchMode extends TouchMode implements View.OnTouchListener {
 	private int mFirstPointerId = -1;
 	private int mFirstPointX = 0;
 	private int mFirstPointY = 0;
@@ -456,8 +400,7 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	private Button mRightClickButton = null;
 	private Button mLeftClickButton = null;
 	
-	public TrackPadTouchMode(MainView mainView)
-	{
+	public TrackPadTouchMode(MainView mainView) {
 		super(mainView);
 		
 		setXMargin(1);
@@ -491,8 +434,7 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	}
 	
 	@Override
-	void setup()
-	{
+	void setup() {
 		super.setup();
 		
 		getMainView().setMouseCursorRGB(120, 120, 120, 255, 255, 255);
@@ -502,8 +444,7 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	}
 	
 	@Override
-	void cleanup()
-	{
+	void cleanup() {
 		getMainView().removeView(mLeftClickButton);
 		getMainView().removeView(mRightClickButton);
 		
@@ -511,8 +452,7 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	}
 	
 	@Override
-	void update()
-	{
+	void update() {
 		super.update();
 		
 		int x;
@@ -528,8 +468,6 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 		}
 		
 		getMainView().setGLViewPos(x, y);
-		
-		//
 		
 		int rx, ry, rw, rh;
 		int lx, ly, lw, lh;
@@ -560,26 +498,12 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	}
 
 	@Override
-	public void onKeyEvent(int keyCode, int pressed)
-	{
-		if(keyCode == KeyEvent.KEYCODE_BACK){
-			if(pressed == 0){
-				if(!mDirectTouchMode){
-					mDirectTouchMode = true;
-					getMainView().setMouseCursorRGB(0, 0, 0, 255, 255, 255);
-				} else {
-					mDirectTouchMode = false;
-					getMainView().setMouseCursorRGB(120, 120, 120, 255, 255, 255);
-				}
-			}
-		} else {
-			getMainView().nativeKey( keyCode, pressed );
-		}
+	public void onKeyEvent(int keyCode, int pressed) {
+		getMainView().nativeKey( keyCode, pressed );
 	}
 	
 	@Override
-	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount)
-	{
+	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
 		if(action == Mouse.SDL_FINGER_DOWN){
 			if(mFirstPointerId < 0){
 				mFirstPointerId = pointerId;
@@ -645,8 +569,7 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	}
 	
 	@Override
-	public void onMouseButtonEvent(int buttonId, int pressed)
-	{
+	public void onMouseButtonEvent(int buttonId, int pressed) {
 		int action = (pressed == 0 ? MotionEvent.ACTION_UP : MotionEvent.ACTION_DOWN);
 		MotionEvent event = MotionEvent.obtain( 0L, 0L, action, 0.0f, 0.0f, 0 );
 		
@@ -664,15 +587,13 @@ class TrackPadTouchMode extends TouchMode implements View.OnTouchListener
 	}
 }
 
-class GamePadTouchMode extends TouchMode
-{
-	class ArrowButton extends View
-	{
-		public final static int BUTTON_NONE       = 0;
-		public final static int BUTTON_UP         = 1 << Globals.GAMEPAD_BUTTON_ARROW_UP_INDEX;
-		public final static int BUTTON_RIGHT      = 1 << Globals.GAMEPAD_BUTTON_ARROW_RIGHT_INDEX;
-		public final static int BUTTON_DOWN       = 1 << Globals.GAMEPAD_BUTTON_ARROW_DOWN_INDEX;
-		public final static int BUTTON_LEFT       = 1 << Globals.GAMEPAD_BUTTON_ARROW_LEFT_INDEX;
+class GamePadTouchMode extends TouchMode {
+	class ArrowButton extends View {
+		public final static int BUTTON_NONE  = 0;
+		public final static int BUTTON_UP    = 1 << Globals.GAMEPAD_BUTTON_ARROW_UP_INDEX;
+		public final static int BUTTON_RIGHT = 1 << Globals.GAMEPAD_BUTTON_ARROW_RIGHT_INDEX;
+		public final static int BUTTON_DOWN  = 1 << Globals.GAMEPAD_BUTTON_ARROW_DOWN_INDEX;
+		public final static int BUTTON_LEFT  = 1 << Globals.GAMEPAD_BUTTON_ARROW_LEFT_INDEX;
 		
 		private Path mPath;
 		private Path mTouchPath;
@@ -680,8 +601,7 @@ class GamePadTouchMode extends TouchMode
 		
 		private int mButtonState = 0;
 		
-		public ArrowButton(Context c)
-		{
+		public ArrowButton(Context c) {
 			super(c);
 			
 			mPath = new Path();
@@ -692,8 +612,7 @@ class GamePadTouchMode extends TouchMode
 		}
 		
 		@Override
-		protected void onSizeChanged (int w, int h, int oldw, int oldh)
-		{
+		protected void onSizeChanged (int w, int h, int oldw, int oldh) {
 			super.onSizeChanged(w, h, oldw, oldh);
 			
 			int x = w / 2;
@@ -748,13 +667,11 @@ class GamePadTouchMode extends TouchMode
 			canvas.drawPath(mPath, mPaint);
 		}
 		
-		public int getButtonState()
-		{
+		public int getButtonState() {
 			return mButtonState;
 		}
 		
-		public void setButtonState(int buttonState)
-		{
+		public void setButtonState(int buttonState) {
 			mButtonState = buttonState;
 			
 			int x = getWidth() / 2;
@@ -780,11 +697,9 @@ class GamePadTouchMode extends TouchMode
 			
 			invalidate();
 		}
-
 	}
 	
-	class ActionButton extends View
-	{
+	class ActionButton extends View {
 		public final static int BUTTON_NONE  = 0;
 		public final static int BUTTON_UP    = 1 << Globals.GAMEPAD_BUTTON_ACTION_UP_INDEX;
 		public final static int BUTTON_RIGHT = 1 << Globals.GAMEPAD_BUTTON_ACTION_RIGHT_INDEX;
@@ -809,8 +724,7 @@ class GamePadTouchMode extends TouchMode
 		}
 		
 		@Override
-		protected void onSizeChanged (int w, int h, int oldw, int oldh)
-		{
+		protected void onSizeChanged (int w, int h, int oldw, int oldh) {
 			super.onSizeChanged(w, h, oldw, oldh);
 			
 			int x = w / 2;
@@ -851,13 +765,11 @@ class GamePadTouchMode extends TouchMode
 			canvas.drawPath(mPath, mPaint);
 		}
 		
-		public int getButtonState()
-		{
+		public int getButtonState() {
 			return mButtonState;
 		}
 		
-		public void setButtonState(int buttonState)
-		{
+		public void setButtonState(int buttonState) {
 			mButtonState = buttonState;
 			
 			int x = getWidth() / 2;
@@ -902,8 +814,7 @@ class GamePadTouchMode extends TouchMode
 	private int mActionButtonHeight = 0;
 	private int[] mActionButtonPointerIdAry = null;
 	
-	public GamePadTouchMode(MainView mainView)
-	{
+	public GamePadTouchMode(MainView mainView) {
 		super(mainView);
 		
 		mArrowButton  = new ArrowButton(mainView.getActivity());
@@ -916,8 +827,7 @@ class GamePadTouchMode extends TouchMode
 	}
 	
 	@Override
-	void setup()
-	{
+	void setup() {
 		super.setup();
 		
 		mIsMouseShowed = getMainView().isMouseCursorShowed();
@@ -928,8 +838,7 @@ class GamePadTouchMode extends TouchMode
 	}
 	
 	@Override
-	void cleanup()
-	{
+	void cleanup() {
 		getMainView().removeView(mArrowButton);
 		getMainView().removeView(mActionButton);
 		
@@ -941,11 +850,8 @@ class GamePadTouchMode extends TouchMode
 	}
 	
 	@Override
-	void update()
-	{
+	void update() {
 		super.update();
-		
-		
 		
 		int buttonSize = (getScreenWidth() / 2) * Globals.GamePadSize / 100;
 		
@@ -974,14 +880,12 @@ class GamePadTouchMode extends TouchMode
 	}
 	
 	@Override
-	public void onKeyEvent(int keyCode, int pressed)
-	{
+	public void onKeyEvent(int keyCode, int pressed) {
 		getMainView().nativeKey( keyCode, pressed );
 	}
 	
 	@Override
-	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount)
-	{		
+	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
 		//Log.i("onMotionEvent", "action:" + action + " x=" + x + " y=" + y);
 		
 		int arrowButtonState  = mArrowButtonState;
@@ -1030,13 +934,13 @@ class GamePadTouchMode extends TouchMode
 					if(ax <= ay){
 						if(mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_LEFT_INDEX] < 0){
 							mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_LEFT_INDEX] = pointerId;
-							mActionButton.setButtonState(mActionButton.getButtonState() | mActionButton.BUTTON_LEFT);
+							mActionButton.setButtonState(mActionButton.getButtonState() | ActionButton.BUTTON_LEFT);
 							getMainView().nativeKey( Globals.GAMEPAD_BUTTON_ACTION_KEY_ARRAY[Globals.GAMEPAD_BUTTON_ACTION_LEFT_INDEX], 1 );
 						}
 					} else {
 						if(mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_UP_INDEX] < 0){
 							mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_UP_INDEX] = pointerId;
-							mActionButton.setButtonState(mActionButton.getButtonState() | mActionButton.BUTTON_UP);
+							mActionButton.setButtonState(mActionButton.getButtonState() | ActionButton.BUTTON_UP);
 							getMainView().nativeKey( Globals.GAMEPAD_BUTTON_ACTION_KEY_ARRAY[Globals.GAMEPAD_BUTTON_ACTION_UP_INDEX], 1 );
 						}
 					}
@@ -1044,13 +948,13 @@ class GamePadTouchMode extends TouchMode
 					if(ax >= ay){
 						if(mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_RIGHT_INDEX] < 0){
 							mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_RIGHT_INDEX] = pointerId;
-							mActionButton.setButtonState(mActionButton.getButtonState() | mActionButton.BUTTON_RIGHT);
+							mActionButton.setButtonState(mActionButton.getButtonState() | ActionButton.BUTTON_RIGHT);
 							getMainView().nativeKey( Globals.GAMEPAD_BUTTON_ACTION_KEY_ARRAY[Globals.GAMEPAD_BUTTON_ACTION_RIGHT_INDEX], 1 );
 						}
 					} else {
 						if(mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_DOWN_INDEX] < 0){
 							mActionButtonPointerIdAry[Globals.GAMEPAD_BUTTON_ACTION_DOWN_INDEX] = pointerId;
-							mActionButton.setButtonState(mActionButton.getButtonState() | mActionButton.BUTTON_DOWN);
+							mActionButton.setButtonState(mActionButton.getButtonState() | ActionButton.BUTTON_DOWN);
 							getMainView().nativeKey( Globals.GAMEPAD_BUTTON_ACTION_KEY_ARRAY[Globals.GAMEPAD_BUTTON_ACTION_DOWN_INDEX], 1 );
 						}
 					}
@@ -1106,7 +1010,5 @@ class GamePadTouchMode extends TouchMode
 	}
 	
 	@Override
-	public void onMouseButtonEvent(int buttonId, int pressed)
-	{
-	}
+	public void onMouseButtonEvent(int buttonId, int pressed) {}
 }

@@ -95,6 +95,7 @@ class Globals {
 	
 	//public static String CurrentDirectoryPathForLauncher = null;  //do not change
 	public static String CurrentDirectoryPath = null;             //do not change
+	public static String FileDownloadPath = "http://test.happyz.org/ChinesePal.zip";
 	//public static String[] CurrentDirectoryPathArray = null;      //do not change
 	//public static String[] CurrentDirectoryValidPathArray = null; //do not change
 	
@@ -378,9 +379,8 @@ class Globals {
 		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_RIGHT_INDEX]), Integer.valueOf(SDL_1_2_Keycodes.SDLK_RIGHT));
 		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_DOWN_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_DOWN));
 		SDLKeyAdditionalKeyMap.put(Integer.valueOf(JOYSTICK_AXISHAT_KEY_ARRAY[JOYSTICK_AXIS_LEFT_INDEX]),  Integer.valueOf(SDL_1_2_Keycodes.SDLK_LEFT));
-		
-		//Key
-		SDLKeyAdditionalKeyMap.put(Integer.valueOf(KeyEvent.KEYCODE_BACK), Integer.valueOf(SDL_1_2_Keycodes.SDLK_ESCAPE));
+
+		SDLKeyAdditionalKeyMap.put(Integer.valueOf(KeyEvent.KEYCODE_BACK), Integer.valueOf(KeyEvent.KEYCODE_MENU ));
 	}
 	
 	//Run Static Initializer

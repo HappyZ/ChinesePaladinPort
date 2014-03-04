@@ -244,14 +244,7 @@ abstract class DifferentTouchInput {
 					}
 				}
 			}
-			if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_HOVER_MOVE) // Support
-																								// bluetooth/USB
-																								// mouse
-																								// -
-																								// available
-																								// since
-																								// Android
-																								// 3.1
+			if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_HOVER_MOVE) // Support bluetooth/USB mouse - available since Android 3.1
 			{
 				// TODO: it is possible that multiple pointers return that
 				// event, but we're handling only pointer #0
@@ -371,11 +364,11 @@ abstract class DifferentTouchInput {
 				y = 65535;
 			if (y < 0)
 				y = 0;
-			int down = 1;
-			int multitouch = event.getPointerCount() - 1;
-			if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP
-					|| (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_CANCEL)
-				down = 0;
+			//int down = 1;
+			//int multitouch = event.getPointerCount() - 1;
+			//if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP
+			//		|| (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_CANCEL)
+			//	down = 0;
 			// TODO: we're processing only one touch pointer, touchpad will most
 			// probably support multitouch
 			// System.out.println("Engine: touch pad event: " + x + ":" + y +

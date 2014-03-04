@@ -2,7 +2,7 @@
 	<resources>
 		<string name="app_name">Chinese Paladin</string>
 		<string name="error">Error</string>
-		<string name="open_dir_error">Could not open directory.</string>
+		<string name="open_dir_error">Could not open directory, please fix it.</string>
 		<string name="quit">Quit</string>
 		<string name="ok">OK</string>
 		<string name="cancel">Cancel</string>
@@ -29,7 +29,7 @@
 		<string name="linear_filtering">Linear Filtering</string>
 		<string name="dont_ask_again">Don\'t ask me again</string>
 		<string name="no_applaunchconfig">Do not use AppLaunchConfig</string>
-		<string name="run">Run</string>
+		<string name="run">Start Game</string>
 		<string name="missing_file">Following files are missing.</string>
 		<string name="function">Function</string>
 		<string name="touch_mode">Touch Mode</string>
@@ -67,5 +67,6 @@
 		<string name="key_cfg_mode">Key Config Mode ( END:MENU_KEY )</string>
 		<string name="press_key_btn">Press KEY/BUTTON</string>
 		<string name="select_key_func">Select Key Function</string>
-		<string name="download">Download</string>
+		<string name="fixit">Fix It</string>
+		<string name="unziping">Unziping Files</string>
 	</resources>

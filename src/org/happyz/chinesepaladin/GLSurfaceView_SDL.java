@@ -989,7 +989,6 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
                 mEglHelper = new EglHelper();
                 // mEglHelper.start();
                 mNeedStart = true;
-                mSizeChanged = true;
                 SwapBuffers();
 
                 mRenderer.onDrawFrame(mGL);
@@ -1049,7 +1048,6 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
                     // changed = mSizeChanged;
                     w = mWidth;
                     h = mHeight;
-                    mSizeChanged = false;
                     mRequestRender = false;
                 }
                 if (mNeedStart) {
@@ -1159,7 +1157,6 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
             synchronized (this) {
                 mWidth = w;
                 mHeight = h;
-                mSizeChanged = true;
                 notify();
             }
         }
@@ -1188,7 +1185,7 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
             }
         }
 
-        private Runnable getEvent() {
+        /*private Runnable getEvent() {
             synchronized(this) {
                 if (mEventQueue.size() > 0) {
                     return mEventQueue.remove(0);
@@ -1196,7 +1193,7 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
 
             }
             return null;
-        }
+        }*/
 
         private boolean mDone;
         private boolean mPaused;
@@ -1245,8 +1242,6 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
     }
 
     private static final Semaphore sEglSemaphore = new Semaphore(1);
-    private boolean mSizeChanged = true;
-
     private GLThread mGLThread;
     private EGLConfigChooser mEGLConfigChooser;
     private GLWrapper mGLWrapper;

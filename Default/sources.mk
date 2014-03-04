@@ -49,6 +49,9 @@ obj/local/armeabi-v7a/objs/sdl-1.2_jni/src \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/libmad \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/stuff/adplug \
+obj/local/armeabi-v7a/objs/app_sdlpal/__/__/sdlports \
+obj/local/armeabi-v7a/objs/app_sdlpal/__/__/sdlports/libmad \
+obj/local/armeabi-v7a/objs/app_sdlpal/__/__/sdlports/adplug \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/libmad \
 obj/local/armeabi-v7a/objs/app_sdlpal/__/__/ports/adplug \
@@ -76,8 +79,4 @@ jni/sdl-1.2_jni/src/cdrom \
 jni/sdl-1.2_jni/src/audio/android \
 jni/sdl-1.2_jni/src/audio \
 jni/sdl-1.2_jni/src \
-a \
-a/native_midi \
-a/libmad \
-a/adplug \
 

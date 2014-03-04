@@ -33,8 +33,8 @@ class Locals {
 	public static int VideoXMargin = 0;
 	public static int VideoYMargin = 0;
 	
-	public static int VideoXRatio = 480;     //r <= 0:FULL;
-	public static int VideoYRatio = 272;     //r <= 0:FULL;
+	public static int VideoXRatio = 0;     //r <= 0:FULL;
+	public static int VideoYRatio = 0;     //r <= 0:FULL;
 	public static int VideoDepthBpp = 32;  //16 or 32
 	public static boolean VideoSmooth = true;
 	
