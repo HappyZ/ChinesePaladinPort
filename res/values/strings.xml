@@ -8,6 +8,7 @@
 		<string name="cancel">Cancel</string>
 		<string name="yes">Yes</string>
 		<string name="no">No</string>
+		<string name="current">Current:&#160;</string>
 		<string name="current_dir">Current Directory</string>
 		<string name="change_dir">Change\nDirectory</string>
 		<string name="set_dir">Set Directory</string>
@@ -15,7 +16,6 @@
 		<string name="exec_module">Execute Module</string>
 		<string name="change">Change</string>
 		<string name="video_depth">Video Depth</string>
-		<string name="aspect_ratio">Screen Aspect Ratio</string>
 		<string name="full">Full</string>
 		<string name="swap">Swap</string>
 		<string name="screen_ratio">Screen Ratio</string>
@@ -25,7 +25,7 @@
 		<string name="r_portrait">Reverse Portrait</string>
 		<string name="r_landscape">Reverse Landscape</string>
 		<string name="unknown">Unknown</string>
-		<string name="smooth_video">Smooth Video</string>
+		<string name="smooth_video">Smooth Video?</string>
 		<string name="linear_filtering">Linear Filtering</string>
 		<string name="dont_ask_again">Don\'t ask me again</string>
 		<string name="no_applaunchconfig">Do not use AppLaunchConfig</string>
@@ -69,4 +69,11 @@
 		<string name="select_key_func">Select Key Function</string>
 		<string name="fixit">Fix It</string>
 		<string name="unziping">Unziping Files</string>
+		<string name="no_other_options">No Other Options</string>
+		<string name="coming_soon">Feature is coming soon</string>
+		<string name="never_show">Never Show Config Again?</string>
+		<string name="never_show_disc">The config page will never show when launch the game. Are you sure?</string>
+		<string name="about">About</string>
+		<string name="gallery">Gallery</string>
+		<string name="chinese_paladin_logo">Chinese Paladin Logo</string>
 	</resources>

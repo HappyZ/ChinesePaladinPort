@@ -104,10 +104,10 @@ class Globals {
 	public static final int[] VIDEO_DEPTH_BPP_ITEMS = {16, 32}; //do not change
 	
 	public static final int[][] VIDEO_RATIO_ITEMS = {
+		{0,0},	//FULL
 		{4,3},	//4:3
 		{16,9},	//16:9
 		{16,10},//16:10
-		{0,0},	//FULL
 		{1,1},
 		{3,2},
 		{3,4},

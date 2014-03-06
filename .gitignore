@@ -21,6 +21,9 @@ local.properties
 .settings/
 .loadpath
 
+# CP only
+Default/
+
 # External tool builders
 .externalToolBuilders/
 

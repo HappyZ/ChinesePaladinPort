@@ -18,11 +18,12 @@ freely, subject to the following restrictions:
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
+
 /*
- 2012/7 Modified by AKIZUKI Katane
- 2013/9 Modified by Martin Dieter
- 2013/12 Modified by HappyZ
-*/
+ * 2012/7 Modified by AKIZUKI Katane
+ * 2013/9 Modified by Martin Dieter
+ * 2014/3 Modified by HappyZ
+ */
 
 
 package org.happyz.chinesepaladin;
@@ -34,7 +35,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import android.text.InputType;
 import android.util.Log;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,21 +46,22 @@ import android.view.WindowManager;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.EditText;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
-import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
-import android.graphics.Color;
-import android.widget.CheckBox;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 	
 	public static MainActivity instance = null;
 	public static MainView mView = null;
+	
+	private Button videoDepth;
+	private Button screenRatio;
+	private Button smoothVideo;
+	private Button nevershow;
+	private Button gallery;
+	private Button about;
+	private Button run;
 	
 	boolean _isPaused = false;
 	
@@ -139,7 +140,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		return true;
 	}
 
-	/**
+	/*
 	 * Run the app
 	 */
 	public void runApp() {
@@ -158,6 +159,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		}
 	}
 
+	/*
+	 * Unzip the game files
+	 */
 	private void unZipFile(){
 		String dirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE + "/";
 		File dir = new File(dirPath);
@@ -218,35 +222,136 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			return true;
 		}
 		
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		alertDialogBuilder.setTitle(getResources().getString(R.string.error));
-		alertDialogBuilder.setMessage(getResources().getString(R.string.open_dir_error));
+		AlertDialog.Builder d = new AlertDialog.Builder(this);
+		d.setTitle(getResources().getString(R.string.error));
+		d.setMessage(getResources().getString(R.string.open_dir_error));
 		if(quitting){
-		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.fixit), new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int whichButton) {
+		    d.setPositiveButton(getResources().getString(R.string.fixit), new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
 					Toast.makeText(instance, R.string.unziping, Toast.LENGTH_SHORT).show();
 					unZipFile();
 				}
 			}).setNegativeButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int whichButton) {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
 					finish();
 				}
 			});
 		} else {
-		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok), null);
+		    d.setPositiveButton(getResources().getString(R.string.ok), null);
 		}
-		alertDialogBuilder.setCancelable(false);
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.show();
+		d.setCancelable(false);
+		d.create().show();
 		
 		return false;
 	}
 	
 	public void onClick(View arg) {
 		switch (arg.getId()) {
-		
+		case R.id.cp_video_depth:
+			if(Globals.VIDEO_DEPTH_BPP_ITEMS.length >= 2){
+				String[] bppItems = new String[Globals.VIDEO_DEPTH_BPP_ITEMS.length];
+				for(int i = 0; i < bppItems.length; i ++){
+					bppItems[i] = "" + Globals.VIDEO_DEPTH_BPP_ITEMS[i] + "bpp";
+				}
+				// new dialog
+				AlertDialog.Builder d = new AlertDialog.Builder(instance);
+				d.setTitle(getResources().getString(R.string.video_depth));
+				d.setItems(bppItems, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Locals.VideoDepthBpp = Globals.VIDEO_DEPTH_BPP_ITEMS[which];
+						videoDepth.setText(getResources().getString(R.string.video_depth)
+								+"\n"+getResources().getString(R.string.current)+Locals.VideoDepthBpp+"bpp");
+						Settings.SaveLocals(instance);
+					}
+				});
+				d.setNegativeButton(getResources().getString(R.string.cancel), null);
+				d.setCancelable(true);
+				d.create().show();
+			}else{
+				Toast.makeText(instance, getResources().getString(R.string.no_other_options), Toast.LENGTH_SHORT).show();
+			}
+			break;
+		case R.id.cp_screen_ratio:
+			if(Globals.VIDEO_RATIO_ITEMS.length >= 2){
+				String[] ratioItems = new String[Globals.VIDEO_RATIO_ITEMS.length + 1];
+				ratioItems[0] = getResources().getString(R.string.swap);
+				for(int i = 1; i < ratioItems.length; i++){
+					int w = Globals.VIDEO_RATIO_ITEMS[i-1][0];
+					int h = Globals.VIDEO_RATIO_ITEMS[i-1][1];
+					if(w > 0 && h > 0){
+						ratioItems[i] = "" + w + ":" + h;
+					} else {
+						ratioItems[i] = getResources().getString(R.string.full);
+					}
+				}
+				// new dialog
+				AlertDialog.Builder d = new AlertDialog.Builder(instance);
+				d.setTitle(getResources().getString(R.string.screen_ratio));
+				d.setItems(ratioItems, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which != 0){
+							Locals.VideoXRatio = Globals.VIDEO_RATIO_ITEMS[which-1][0];
+							Locals.VideoYRatio = Globals.VIDEO_RATIO_ITEMS[which-1][1];
+						}else{
+							int tmp = Locals.VideoXRatio;
+							Locals.VideoXRatio = Locals.VideoYRatio;
+							Locals.VideoYRatio = tmp;
+						}
+						instance.screenRatio.setText(getResources().getString(R.string.screen_ratio)
+								+"\n"+getResources().getString(R.string.current)
+								+((Locals.VideoXRatio > 0 && Locals.VideoYRatio > 0)?(Locals.VideoXRatio+":"+Locals.VideoYRatio):(getResources().getString(R.string.full))));
+						Settings.SaveLocals(instance);
+					}
+				});
+				d.setNegativeButton(getResources().getString(R.string.cancel), null);
+				d.setCancelable(true);
+				d.create().show();
+			}
+			break;
+		case R.id.cp_smooth_video:
+			Locals.VideoSmooth = !Locals.VideoSmooth;
+			Settings.SaveLocals(instance);
+			this.smoothVideo.setText(getResources().getString(R.string.smooth_video)
+					+"\n"+getResources().getString(R.string.current)
+					+(Locals.VideoSmooth?"Yes":"No"));
+			break;
+		case R.id.cp_never_show:
+			// new dialog
+			AlertDialog.Builder d = new AlertDialog.Builder(instance);
+			d.setTitle(getResources().getString(R.string.never_show));
+			d.setMessage(getResources().getString(R.string.never_show_disc));
+			d.setNegativeButton(getResources().getString(R.string.no),  new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Locals.AppLaunchConfigUse = true;
+					instance.nevershow.setText(getResources().getString(R.string.never_show)
+							+"\n"+getResources().getString(R.string.current)
+							+(Locals.AppLaunchConfigUse?"No":"Yes"));
+					Settings.SaveLocals(instance);
+				}
+			});
+			d.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Locals.AppLaunchConfigUse = false;
+					instance.nevershow.setText(getResources().getString(R.string.never_show)
+							+"\n"+getResources().getString(R.string.current)
+							+(Locals.AppLaunchConfigUse?"No":"Yes"));
+					Settings.SaveLocals(instance);
+				}
+			});
+			d.setCancelable(true);
+			d.create().show();
+			break;
+		case R.id.cp_run:
+			runApp();
+			break;
 		default:
-			
+			Toast.makeText(instance, getResources().getString(R.string.coming_soon),Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -254,462 +359,240 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * Initialize the Configuration View
 	 */
 	private void initialConfigView(){
-		
+		// video depth
+		this.videoDepth = ((Button) findViewById(R.id.cp_video_depth));
+		this.videoDepth.setText(getResources().getString(R.string.video_depth)
+				+"\n"+getResources().getString(R.string.current)+Locals.VideoDepthBpp+"bpp");
+		this.videoDepth.setOnClickListener(this);
+		// screen ratio
+		this.screenRatio = ((Button) findViewById(R.id.cp_screen_ratio));
+		this.screenRatio.setText(getResources().getString(R.string.screen_ratio)
+				+"\n"+getResources().getString(R.string.current)
+				+((Locals.VideoXRatio > 0 && Locals.VideoYRatio > 0)?(Locals.VideoXRatio+":"+Locals.VideoYRatio):(getResources().getString(R.string.full))));
+		this.screenRatio.setOnClickListener(this);
+		// smooth video
+		this.smoothVideo = ((Button) findViewById(R.id.cp_smooth_video));
+		this.smoothVideo.setText(getResources().getString(R.string.smooth_video)
+				+"\n"+getResources().getString(R.string.current)
+				+(Locals.VideoSmooth?"Yes":"No"));
+		this.smoothVideo.setOnClickListener(this);
+		// never show
+		this.nevershow = ((Button) findViewById(R.id.cp_never_show));
+		this.nevershow.setText(getResources().getString(R.string.never_show)
+				+"\n"+getResources().getString(R.string.current)
+				+(Locals.AppLaunchConfigUse?"No":"Yes"));
+		this.nevershow.setOnClickListener(this);
+		// gallery
+		this.gallery = ((Button) findViewById(R.id.cp_gallery));
+		this.gallery.setOnClickListener(this);
+		// about
+		this.about = ((Button) findViewById(R.id.cp_about));
+		this.about.setOnClickListener(this);
+		// run game
+		this.run = ((Button) findViewById(R.id.cp_run));
+		this.run.setOnClickListener(this);
 	}
 	
-	/**
-	 * Configuration View
-	 */
-	private class AppLaunchConfigView extends LinearLayout {
-		MainActivity mActivity;
-
-		ScrollView mConfView;
-		LinearLayout mConfLayout;
-
-		//TextView mExecuteModuleText;
-		TextView mVideoDepthText;
-		TextView mScreenRatioText;
-		TextView mScreenOrientationText;
+	/*
+		TextView txt1 = new TextView(mActivity);
+		txt1.setTextSize(18.0f);
+		txt1.setText(getResources().getString(R.string.screen_orientation));
+		txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 		
-		TextView[] mEnvironmentTextArray;
-		Button[]   mEnvironmentButtonArray;
-		
-		Button mRunButton;
-		
-		public AppLaunchConfigView(MainActivity activity) {
-			super(activity);
-			mActivity = activity;
-			// Orientation: default vertical
-			setOrientation(LinearLayout.VERTICAL);
-			{
-				mConfView = new ScrollView(mActivity);
+		mScreenOrientationText = new TextView(mActivity);
+		mScreenOrientationText.setPadding(5, 0, 0, 0);
+		switch(Locals.ScreenOrientation){
+			case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
+				mScreenOrientationText.setText(getResources().getString(R.string.portrait));
+				break;
+			case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
+				mScreenOrientationText.setText(getResources().getString(R.string.landscape));
+				break;
+			case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
+				mScreenOrientationText.setText(getResources().getString(R.string.r_portrait));
+				break;
+			case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
+				mScreenOrientationText.setText(getResources().getString(R.string.r_landscape));
+				break;
+			default:
+				mScreenOrientationText.setText(getResources().getString(R.string.unknown));
+				break;
+		}
+		txtLayout.addView(mScreenOrientationText, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+	}
+	screenOrientationLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+	
+	Button btn = new Button(mActivity);
+	btn.setText(getResources().getString(R.string.change));
+	btn.setOnClickListener(new OnClickListener(){
+		public void onClick(View v){
+			String[] screenOrientationItems;
+			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD){
+				screenOrientationItems = new String[]{getResources().getString(R.string.portrait), getResources().getString(R.string.landscape), getResources().getString(R.string.r_portrait), getResources().getString(R.string.r_landscape)};
+			} else {
+				screenOrientationItems = new String[]{getResources().getString(R.string.portrait), getResources().getString(R.string.landscape)};
+			}
+			
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
+			alertDialogBuilder.setTitle(getResources().getString(R.string.screen_orientation));
+			alertDialogBuilder.setItems(screenOrientationItems, new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which)
 				{
-					mConfLayout = new LinearLayout(mActivity);
-					mConfLayout.setOrientation(LinearLayout.VERTICAL);
-					{
-						//Video Depth
-						LinearLayout videoDepthLayout = new LinearLayout(mActivity);
-						{
-							LinearLayout txtLayout = new LinearLayout(mActivity);
-							txtLayout.setOrientation(LinearLayout.VERTICAL);
-							{
-								TextView txt1 = new TextView(mActivity);
-								txt1.setTextSize(18.0f);
-								txt1.setText(getResources().getString(R.string.video_depth));
-								txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								
-								mVideoDepthText = new TextView(mActivity);
-								mVideoDepthText.setPadding(5, 0, 0, 0);
-								mVideoDepthText.setText("" + Locals.VideoDepthBpp + "bpp");
-								txtLayout.addView(mVideoDepthText, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-							videoDepthLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-							
-							if(Globals.VIDEO_DEPTH_BPP_ITEMS.length >= 2){
-								Button btn = new Button(mActivity);
-								btn.setText(getResources().getString(R.string.change));
-								btn.setOnClickListener(new OnClickListener(){
-									public void onClick(View v){
-										String[] bppItems = new String[Globals.VIDEO_DEPTH_BPP_ITEMS.length];
-										for(int i = 0; i < bppItems.length; i ++){
-											bppItems[i] = "" + Globals.VIDEO_DEPTH_BPP_ITEMS[i] + "bpp";
-										}
-										
-										AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-										alertDialogBuilder.setTitle(getResources().getString(R.string.video_depth));
-										alertDialogBuilder.setItems(bppItems, new DialogInterface.OnClickListener(){
-											public void onClick(DialogInterface dialog, int which)
-											{
-												Locals.VideoDepthBpp = Globals.VIDEO_DEPTH_BPP_ITEMS[which];
-												mVideoDepthText.setText("" + Locals.VideoDepthBpp + "bpp");
-												Settings.SaveLocals(mActivity);
-											}
-										});
-										alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
-										alertDialogBuilder.setCancelable(true);
-										AlertDialog alertDialog = alertDialogBuilder.create();
-										alertDialog.show();
-									}
-								});
-								videoDepthLayout.addView(btn, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-						}
-						mConfLayout.addView(videoDepthLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						
-						//Screen Ratio
-						LinearLayout screenRatioLayout = new LinearLayout(mActivity);
-						{
-							LinearLayout txtLayout = new LinearLayout(mActivity);
-							txtLayout.setOrientation(LinearLayout.VERTICAL);
-							{
-								TextView txt1 = new TextView(mActivity);
-								txt1.setTextSize(18.0f);
-								txt1.setText(getResources().getString(R.string.aspect_ratio));
-								txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								
-								mScreenRatioText = new TextView(mActivity);
-								mScreenRatioText.setPadding(5, 0, 0, 0);
-								if(Locals.VideoXRatio > 0 && Locals.VideoYRatio > 0){
-									mScreenRatioText.setText("" + Locals.VideoXRatio + ":" + Locals.VideoYRatio);
-								} else {
-									mScreenRatioText.setText(getResources().getString(R.string.full));
-								}
-								txtLayout.addView(mScreenRatioText, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-							screenRatioLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-							
-							Button btn1 = new Button(mActivity);
-							btn1.setText(getResources().getString(R.string.swap));
-							btn1.setOnClickListener(new OnClickListener(){
-								public void onClick(View v){
-									int tmp = Locals.VideoXRatio;
-									Locals.VideoXRatio = Locals.VideoYRatio;
-									Locals.VideoYRatio = tmp;
-									if(Locals.VideoXRatio > 0 && Locals.VideoYRatio > 0){
-										mScreenRatioText.setText("" + Locals.VideoXRatio + ":" + Locals.VideoYRatio);
-									} else {
-										mScreenRatioText.setText(getResources().getString(R.string.full));
-									}
-									Settings.SaveLocals(mActivity);
-								}
-							});
-							screenRatioLayout.addView(btn1, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							
-							if(Globals.VIDEO_RATIO_ITEMS.length >= 2){
-								Button btn = new Button(mActivity);
-								btn.setText(getResources().getString(R.string.change));
-								btn.setOnClickListener(new OnClickListener(){
-									public void onClick(View v){
-										String[] ratioItems = new String[Globals.VIDEO_RATIO_ITEMS.length];
-										for(int i = 0; i < ratioItems.length; i ++){
-											int w = Globals.VIDEO_RATIO_ITEMS[i][0];
-											int h = Globals.VIDEO_RATIO_ITEMS[i][1];
-											if(w > 0 && h > 0){
-												ratioItems[i] = "" + w + ":" + h;
-											} else {
-												ratioItems[i] = getResources().getString(R.string.full);
-											}
-										}
-										
-										AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-										alertDialogBuilder.setTitle(getResources().getString(R.string.screen_ratio));
-										alertDialogBuilder.setItems(ratioItems, new DialogInterface.OnClickListener(){
-											public void onClick(DialogInterface dialog, int which)
-											{
-												Locals.VideoXRatio = Globals.VIDEO_RATIO_ITEMS[which][0];
-												Locals.VideoYRatio = Globals.VIDEO_RATIO_ITEMS[which][1];
-												if(Locals.VideoXRatio > 0 && Locals.VideoYRatio > 0){
-													mScreenRatioText.setText("" + Locals.VideoXRatio + ":" + Locals.VideoYRatio);
-												} else {
-													mScreenRatioText.setText(getResources().getString(R.string.full));
-												}
-												Settings.SaveLocals(mActivity);
-											}
-										});
-										alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
-										alertDialogBuilder.setCancelable(true);
-										AlertDialog alertDialog = alertDialogBuilder.create();
-										alertDialog.show();
-									}
-								});
-								screenRatioLayout.addView(btn, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-						}
-						mConfLayout.addView(screenRatioLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-						//Screen Orientation
-						LinearLayout screenOrientationLayout = new LinearLayout(mActivity);
-						{
-							LinearLayout txtLayout = new LinearLayout(mActivity);
-							txtLayout.setOrientation(LinearLayout.VERTICAL);
-							{
-								TextView txt1 = new TextView(mActivity);
-								txt1.setTextSize(18.0f);
-								txt1.setText(getResources().getString(R.string.screen_orientation));
-								txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								
-								mScreenOrientationText = new TextView(mActivity);
-								mScreenOrientationText.setPadding(5, 0, 0, 0);
-								switch(Locals.ScreenOrientation){
-									case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
-										mScreenOrientationText.setText(getResources().getString(R.string.portrait));
-										break;
-									case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
-										mScreenOrientationText.setText(getResources().getString(R.string.landscape));
-										break;
-									case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
-										mScreenOrientationText.setText(getResources().getString(R.string.r_portrait));
-										break;
-									case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
-										mScreenOrientationText.setText(getResources().getString(R.string.r_landscape));
-										break;
-									default:
-										mScreenOrientationText.setText(getResources().getString(R.string.unknown));
-										break;
-								}
-								txtLayout.addView(mScreenOrientationText, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-							screenOrientationLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-							
-							Button btn = new Button(mActivity);
-							btn.setText(getResources().getString(R.string.change));
-							btn.setOnClickListener(new OnClickListener(){
-								public void onClick(View v){
-									String[] screenOrientationItems;
-									if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD){
-										screenOrientationItems = new String[]{getResources().getString(R.string.portrait), getResources().getString(R.string.landscape), getResources().getString(R.string.r_portrait), getResources().getString(R.string.r_landscape)};
-									} else {
-										screenOrientationItems = new String[]{getResources().getString(R.string.portrait), getResources().getString(R.string.landscape)};
-									}
-									
-									AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-									alertDialogBuilder.setTitle(getResources().getString(R.string.screen_orientation));
-									alertDialogBuilder.setItems(screenOrientationItems, new DialogInterface.OnClickListener(){
-										public void onClick(DialogInterface dialog, int which)
-										{
-											switch(which){
-												case 0:
-													Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-													mScreenOrientationText.setText(getResources().getString(R.string.portrait));
-													break;
-												case 1:
-													Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-													mScreenOrientationText.setText(getResources().getString(R.string.landscape));
-													break;
-												case 2:
-													Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-													mScreenOrientationText.setText(getResources().getString(R.string.r_portrait));
-													break;
-												case 3:
-													Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-													mScreenOrientationText.setText(getResources().getString(R.string.r_landscape));
-													break;
-											}
-											Settings.SaveLocals(mActivity);
-										}
-									});
-									alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
-									alertDialogBuilder.setCancelable(true);
-									AlertDialog alertDialog = alertDialogBuilder.create();
-									alertDialog.show();
-								}
-							});
-							screenOrientationLayout.addView(btn, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						}
-						mConfLayout.addView(screenOrientationLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-												
-						//Smooth Video
-						LinearLayout videoSmoothLayout = new LinearLayout(mActivity);
-						{
-							CheckBox chk = new CheckBox(mActivity);
-							chk.setChecked(Locals.VideoSmooth);
-							chk.setOnClickListener(new OnClickListener(){
-								public void onClick(View v){
-									CheckBox c = (CheckBox)v;
-									Locals.VideoSmooth = c.isChecked();
-									Settings.SaveLocals(mActivity);
-								}
-							});
-							videoSmoothLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							
-							LinearLayout txtLayout = new LinearLayout(mActivity);
-							txtLayout.setOrientation(LinearLayout.VERTICAL);
-							{
-								TextView txt1 = new TextView(mActivity);
-								txt1.setTextSize(18.0f);
-								txt1.setText(getResources().getString(R.string.smooth_video));
-								txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								
-								TextView txt2 = new TextView(mActivity);
-								txt2.setPadding(5, 0, 0, 0);
-								txt2.setText(getResources().getString(R.string.linear_filtering));
-								txtLayout.addView(txt2, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-							videoSmoothLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-						}
-						mConfLayout.addView(videoSmoothLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-						//Command Options
-						for(int i = 0; i < Globals.APP_COMMAND_OPTIONS_ITEMS.length; i ++){
-							LinearLayout cmdOptLayout = new LinearLayout(mActivity);
-							{
-								final int index = i;
-								
-								CheckBox chk = new CheckBox(mActivity);
-								chk.setChecked(Locals.AppCommandOptions.indexOf(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]) >= 0);
-								chk.setOnClickListener(new OnClickListener(){
-									public void onClick(View v){
-										CheckBox c = (CheckBox)v;
-										if(!c.isChecked()){
-											int start = Locals.AppCommandOptions.indexOf(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]);
-											if(start == 0){
-												Locals.AppCommandOptions = Locals.AppCommandOptions.replace(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1], "");
-											} else if(start >= 0){
-												Locals.AppCommandOptions = Locals.AppCommandOptions.replace(" " + Globals.APP_COMMAND_OPTIONS_ITEMS[index][1], "");
-											}
-										} else {
-											if(Locals.AppCommandOptions.equals("")){
-												Locals.AppCommandOptions = Globals.APP_COMMAND_OPTIONS_ITEMS[index][1];
-											} else {
-												Locals.AppCommandOptions += " " + Globals.APP_COMMAND_OPTIONS_ITEMS[index][1];
-											}
-										}
-										Settings.SaveLocals(mActivity);
-									}
-								});
-								cmdOptLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								
-								LinearLayout txtLayout = new LinearLayout(mActivity);
-								txtLayout.setOrientation(LinearLayout.VERTICAL);
-								{
-									TextView txt1 = new TextView(mActivity);
-									txt1.setTextSize(18.0f);
-									txt1.setText(Globals.APP_COMMAND_OPTIONS_ITEMS[index][0]);
-									txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-									
-									TextView txt2 = new TextView(mActivity);
-									txt2.setPadding(5, 0, 0, 0);
-									txt2.setText(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]);
-									txtLayout.addView(txt2, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								}
-								cmdOptLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-							}
-							mConfLayout.addView(cmdOptLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						}
-						
-						//Environment
-						mEnvironmentTextArray = new TextView[Globals.ENVIRONMENT_ITEMS.length];
-						mEnvironmentButtonArray = new Button[Globals.ENVIRONMENT_ITEMS.length];
-						for(int i = 0; i < Globals.ENVIRONMENT_ITEMS.length; i ++){
-							LinearLayout envLayout = new LinearLayout(mActivity);
-							{
-								final int index = i;
-								String value = Locals.EnvironmentMap.get(Globals.ENVIRONMENT_ITEMS[index][1]);
-								
-								CheckBox chk = new CheckBox(mActivity);
-								chk.setChecked(value != null);
-								chk.setOnClickListener(new OnClickListener(){
-									public void onClick(View v){
-										CheckBox c = (CheckBox)v;
-										if(!c.isChecked()){
-											Locals.EnvironmentMap.remove(Globals.ENVIRONMENT_ITEMS[index][1]);
-											mEnvironmentTextArray[index].setText("unset " + Globals.ENVIRONMENT_ITEMS[index][1]);
-											mEnvironmentButtonArray[index].setVisibility(View.GONE);
-										} else {
-											Locals.EnvironmentMap.put(Globals.ENVIRONMENT_ITEMS[index][1], Globals.ENVIRONMENT_ITEMS[index][2]);
-											mEnvironmentTextArray[index].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + Globals.ENVIRONMENT_ITEMS[index][2]);
-											mEnvironmentButtonArray[index].setVisibility(View.VISIBLE);
-										}
-										Settings.SaveLocals(mActivity);
-									}
-								});
-								envLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								
-								LinearLayout txtLayout = new LinearLayout(mActivity);
-								txtLayout.setOrientation(LinearLayout.VERTICAL);
-								{
-									TextView txt1 = new TextView(mActivity);
-									txt1.setTextSize(18.0f);
-									txt1.setText(Globals.ENVIRONMENT_ITEMS[index][0]);
-									txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-									
-									mEnvironmentTextArray[i] = new TextView(mActivity);
-									mEnvironmentTextArray[i].setPadding(5, 0, 0, 0);
-									if(value == null){
-										mEnvironmentTextArray[i].setText("unset" + Globals.ENVIRONMENT_ITEMS[index][1]);
-									} else {
-										mEnvironmentTextArray[i].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + value);
-									}
-									txtLayout.addView(mEnvironmentTextArray[i], new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-								}
-								envLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-								
-								mEnvironmentButtonArray[index] = new Button(mActivity);
-								mEnvironmentButtonArray[index].setText("Change");
-								mEnvironmentButtonArray[index].setOnClickListener(new OnClickListener(){
-									public void onClick(View v){
-										final EditText ed = new EditText(mActivity);
-										ed.setInputType(InputType.TYPE_CLASS_TEXT);
-										ed.setText(Locals.EnvironmentMap.get(Globals.ENVIRONMENT_ITEMS[index][1]));
-										
-										AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-										alertDialogBuilder.setTitle(Globals.ENVIRONMENT_ITEMS[index][1]);
-										alertDialogBuilder.setView(ed);
-										alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
-											public void onClick(DialogInterface dialog, int whichButton) {
-												String newval = ed.getText().toString();
-												Locals.EnvironmentMap.put(Globals.ENVIRONMENT_ITEMS[index][1], newval);
-												mEnvironmentTextArray[index].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + newval);
-												Settings.SaveLocals(mActivity);
-											}
-										});
-										alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
-										alertDialogBuilder.setCancelable(true);
-										AlertDialog alertDialog = alertDialogBuilder.create();
-										alertDialog.show();
-									}
-								});
-								mEnvironmentButtonArray[index].setVisibility(value != null ? View.VISIBLE : View.GONE);
-								envLayout.addView(mEnvironmentButtonArray[index], new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-							}
-							mConfLayout.addView(envLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						}
+					switch(which){
+						case 0:
+							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+							mScreenOrientationText.setText(getResources().getString(R.string.portrait));
+							break;
+						case 1:
+							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+							mScreenOrientationText.setText(getResources().getString(R.string.landscape));
+							break;
+						case 2:
+							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+							mScreenOrientationText.setText(getResources().getString(R.string.r_portrait));
+							break;
+						case 3:
+							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+							mScreenOrientationText.setText(getResources().getString(R.string.r_landscape));
+							break;
 					}
-					mConfView.addView(mConfLayout);
+					Settings.SaveLocals(mActivity);
 				}
-				addView(mConfView, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, 0, 1) );
-				
-				View divider = new View(mActivity);
-				divider.setBackgroundColor(Color.GRAY);
-				addView(divider, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2) );
-				
-				LinearLayout runLayout = new LinearLayout(mActivity);
-				
-				//don't ask me again
-				LinearLayout askLayout = new LinearLayout(mActivity);
-				{
-					CheckBox chk = new CheckBox(mActivity);
-					chk.setChecked(!Locals.AppLaunchConfigUse);
-					chk.setOnClickListener(new OnClickListener(){
-						public void onClick(View v){
-							CheckBox c = (CheckBox)v;
-							Locals.AppLaunchConfigUse = !c.isChecked();
-							Settings.SaveLocals(mActivity);
-						}
-					});
-					askLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-					
-					LinearLayout txtLayout = new LinearLayout(mActivity);
-					txtLayout.setOrientation(LinearLayout.VERTICAL);
-					{
-						TextView txt1 = new TextView(mActivity);
-						txt1.setTextSize(16.0f);
-						txt1.setText(getResources().getString(R.string.dont_ask_again));
-						txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						
-						TextView txt2 = new TextView(mActivity);
-						txt2.setPadding(5, 0, 0, 0);
-						txt2.setText(getResources().getString(R.string.no_applaunchconfig));
-						txtLayout.addView(txt2, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+			});
+			alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
+			alertDialogBuilder.setCancelable(true);
+			AlertDialog alertDialog = alertDialogBuilder.create();
+			alertDialog.show();
+		}
+	});
+	screenOrientationLayout.addView(btn, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+}
+mConfLayout.addView(screenOrientationLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+//Command Options
+for(int i = 0; i < Globals.APP_COMMAND_OPTIONS_ITEMS.length; i ++){
+	LinearLayout cmdOptLayout = new LinearLayout(mActivity);
+	{
+		final int index = i;
+		
+		CheckBox chk = new CheckBox(mActivity);
+		chk.setChecked(Locals.AppCommandOptions.indexOf(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]) >= 0);
+		chk.setOnClickListener(new OnClickListener(){
+			public void onClick(View v){
+				CheckBox c = (CheckBox)v;
+				if(!c.isChecked()){
+					int start = Locals.AppCommandOptions.indexOf(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]);
+					if(start == 0){
+						Locals.AppCommandOptions = Locals.AppCommandOptions.replace(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1], "");
+					} else if(start >= 0){
+						Locals.AppCommandOptions = Locals.AppCommandOptions.replace(" " + Globals.APP_COMMAND_OPTIONS_ITEMS[index][1], "");
 					}
-					askLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+				} else {
+					if(Locals.AppCommandOptions.equals("")){
+						Locals.AppCommandOptions = Globals.APP_COMMAND_OPTIONS_ITEMS[index][1];
+					} else {
+						Locals.AppCommandOptions += " " + Globals.APP_COMMAND_OPTIONS_ITEMS[index][1];
+					}
 				}
-				runLayout.addView(askLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+				Settings.SaveLocals(mActivity);
+			}
+		});
+		cmdOptLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		
+		LinearLayout txtLayout = new LinearLayout(mActivity);
+		txtLayout.setOrientation(LinearLayout.VERTICAL);
+		{
+			TextView txt1 = new TextView(mActivity);
+			txt1.setTextSize(18.0f);
+			txt1.setText(Globals.APP_COMMAND_OPTIONS_ITEMS[index][0]);
+			txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+			
+			TextView txt2 = new TextView(mActivity);
+			txt2.setPadding(5, 0, 0, 0);
+			txt2.setText(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]);
+			txtLayout.addView(txt2, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		}
+		cmdOptLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+	}
+	mConfLayout.addView(cmdOptLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+}
+
+//Environment
+mEnvironmentTextArray = new TextView[Globals.ENVIRONMENT_ITEMS.length];
+mEnvironmentButtonArray = new Button[Globals.ENVIRONMENT_ITEMS.length];
+for(int i = 0; i < Globals.ENVIRONMENT_ITEMS.length; i ++){
+	LinearLayout envLayout = new LinearLayout(mActivity);
+	{
+		final int index = i;
+		String value = Locals.EnvironmentMap.get(Globals.ENVIRONMENT_ITEMS[index][1]);
+		
+		CheckBox chk = new CheckBox(mActivity);
+		chk.setChecked(value != null);
+		chk.setOnClickListener(new OnClickListener(){
+			public void onClick(View v){
+				CheckBox c = (CheckBox)v;
+				if(!c.isChecked()){
+					Locals.EnvironmentMap.remove(Globals.ENVIRONMENT_ITEMS[index][1]);
+					mEnvironmentTextArray[index].setText("unset " + Globals.ENVIRONMENT_ITEMS[index][1]);
+					mEnvironmentButtonArray[index].setVisibility(View.GONE);
+				} else {
+					Locals.EnvironmentMap.put(Globals.ENVIRONMENT_ITEMS[index][1], Globals.ENVIRONMENT_ITEMS[index][2]);
+					mEnvironmentTextArray[index].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + Globals.ENVIRONMENT_ITEMS[index][2]);
+					mEnvironmentButtonArray[index].setVisibility(View.VISIBLE);
+				}
+				Settings.SaveLocals(mActivity);
+			}
+		});
+		envLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		
+		LinearLayout txtLayout = new LinearLayout(mActivity);
+		txtLayout.setOrientation(LinearLayout.VERTICAL);
+		{
+			TextView txt1 = new TextView(mActivity);
+			txt1.setTextSize(18.0f);
+			txt1.setText(Globals.ENVIRONMENT_ITEMS[index][0]);
+			txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+			
+			mEnvironmentTextArray[i] = new TextView(mActivity);
+			mEnvironmentTextArray[i].setPadding(5, 0, 0, 0);
+			if(value == null){
+				mEnvironmentTextArray[i].setText("unset" + Globals.ENVIRONMENT_ITEMS[index][1]);
+			} else {
+				mEnvironmentTextArray[i].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + value);
+			}
+			txtLayout.addView(mEnvironmentTextArray[i], new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		}
+		envLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+		
+		mEnvironmentButtonArray[index] = new Button(mActivity);
+		mEnvironmentButtonArray[index].setText("Change");
+		mEnvironmentButtonArray[index].setOnClickListener(new OnClickListener(){
+			public void onClick(View v){
+				final EditText ed = new EditText(mActivity);
+				ed.setInputType(InputType.TYPE_CLASS_TEXT);
+				ed.setText(Locals.EnvironmentMap.get(Globals.ENVIRONMENT_ITEMS[index][1]));
 				
-				mRunButton = new Button(mActivity);
-				mRunButton.setText(" " + getResources().getString(R.string.run) + " ");
-				mRunButton.setTextSize(24.0f);
-				mRunButton.setOnClickListener(new OnClickListener(){
-					public void onClick(View v){
-						runApp();
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
+				alertDialogBuilder.setTitle(Globals.ENVIRONMENT_ITEMS[index][1]);
+				alertDialogBuilder.setView(ed);
+				alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
+					public void onClick(DialogInterface dialog, int whichButton) {
+						String newval = ed.getText().toString();
+						Locals.EnvironmentMap.put(Globals.ENVIRONMENT_ITEMS[index][1], newval);
+						mEnvironmentTextArray[index].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + newval);
+						Settings.SaveLocals(mActivity);
 					}
 				});
-				runLayout.addView(mRunButton, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT) );
-				
-				addView(runLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT) );
+				alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
+				alertDialogBuilder.setCancelable(true);
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
 			}
-		}
+		});
+		mEnvironmentButtonArray[index].setVisibility(value != null ? View.VISIBLE : View.GONE);
+		envLayout.addView(mEnvironmentButtonArray[index], new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 	}
+	*/
 	
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
