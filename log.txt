@@ -1,0 +1,21 @@
+adplug/binio.h
+	was uncommented
+	----------------
+	//#define BINIO_WITH_MATH 1
+	----------------
+adplug/fmopl.c	
+	was just __inline defined
+	----------------
+	#ifdef __clang__
+	#define INLINE          static
+	#else
+	#define INLINE          __inline
+	#endif
+	-----------------
+
+rngplay.c
+	was DecodeYJ2
+	-----------------
+	Decompress(buf, rng, 65000);
+	-----------------
+	

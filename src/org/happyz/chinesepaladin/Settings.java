@@ -19,10 +19,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 /*
- 2012/7 Modified by AKIZUKI Katane
- */
-/*
- 2013/9 Modified by Martin Dieter
+ * 2012/7 Modified by AKIZUKI Katane
+ * 2013/9 Modified by Martin Dieter
+ * 2014/3 Modified by HappyZ
  */
 
 package org.happyz.chinesepaladin;
@@ -54,8 +53,9 @@ class Settings {
 
 	/**
 	 * Globally setup the directory
+	 * @author HappyZ
 	 */
-	private static void setupCurrentDirectory() {
+	public static void setupCurrentDirectory() {
 		// reinitialize the directory path
 		Globals.CurrentDirectoryPath = null;
 		String curDirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;

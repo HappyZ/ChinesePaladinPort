@@ -158,7 +158,6 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener {
 		mMainView.setMouseCursorRGB(0, 0, 0, 255, 255, 255);
 	}
 	
-	@SuppressWarnings("unused")
 	void update() {
 		int i;
 		

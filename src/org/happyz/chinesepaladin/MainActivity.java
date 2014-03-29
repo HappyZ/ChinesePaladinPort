@@ -35,24 +35,34 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.media.AudioManager;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 	
 	public static MainActivity instance = null;
+	public static DrawerLayout mDrawer = null;
+	public static FrameLayout mFrame = null;
+	public static ListView mSettings = null;
 	public static MainView mView = null;
 	
 	private Button videoDepth;
@@ -62,6 +72,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	private Button gallery;
 	private Button about;
 	private Button run;
+	
+	private String[] settingTitles;
 	
 	boolean _isPaused = false;
 	
@@ -83,28 +95,60 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	
 	/**
 	 * Configuration Screen
+	 * @author HappyZ
 	 */
 	public void runAppLaunchConfig() {
-		if(checkCurrentDirectory(true)){
-			Settings.LoadLocals(this); // load local settings
-			if(!Locals.AppLaunchConfigUse){
-				runApp();
-			}else{
-				//AppLaunchConfigView view = new AppLaunchConfigView(this);
-				setContentView(R.layout.cp_config);
-				initialConfigView();
-			}
+		checkGameDirectory(); // if failed, exit app
+		Settings.LoadLocals(this); // load local settings
+		if(!Locals.AppLaunchConfigUse){
+			runApp();
+		}else{
+			//AppLaunchConfigView view = new AppLaunchConfigView(this);
+			setContentView(R.layout.cp_config);
+			initialConfigView();
+		}
+	}
+	
+	/**
+	 * Check the validity of the directory (and files)
+	 * @author HappyZ
+	 */
+	private void checkGameDirectory() {
+		String curDirPath = Globals.CurrentDirectoryPath;
+		String path = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;
+		if (curDirPath == null || curDirPath.equals("")){
+			// create directory if not exist
+			File dir = new File(path);
+			dir.mkdirs();
+			Settings.setupCurrentDirectory(); // setup again
+		}
+		curDirPath = Globals.CurrentDirectoryPath;
+		if(curDirPath != null && !curDirPath.equals("")){
+			if (!checkGameFiles()) unZipFile();
+			Toast.makeText(instance, "Game files have been validated", Toast.LENGTH_SHORT).show();
+		} else { // exit app since failed to create a directory
+			AlertDialog.Builder d = new AlertDialog.Builder(this);
+			d.setTitle(getResources().getString(R.string.error));
+			d.setMessage(getResources().getString(R.string.error_create_dir) + path);
+			d.setNegativeButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			d.setCancelable(false);
+			d.create().show();
 		}
 	}
 
 	/**
-	 * File Check
+	 * Validate the Files
+	 * @author HappyZ
+	 * @return boolean check existence of all required files
 	 */
-	private boolean checkAppNeedFiles() {
-		String missingFileNames = "";
-		int missingCount = 0;
+	private boolean checkGameFiles() {
 		for(String fileName : Globals.APP_NEED_FILENAME_ARRAY){
-			String[] itemNameArray = fileName.split("\\|");
+			String[] itemNameArray = fileName.split("\\|"); // support "|" (or) files
 			boolean flag = false;
 			for(String itemName : itemNameArray){
 				File file = new File(Globals.CurrentDirectoryPath + "/" + itemName.trim());
@@ -113,64 +157,50 @@ public class MainActivity extends Activity implements View.OnClickListener {
 					break;
 				}
 			}
-			if(!flag){
-				missingCount ++;
-				missingFileNames += "File " + missingCount + ": " + fileName.replace("|"," or ") + "\n";
-			}
-		}
-		if(missingCount != 0){
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-			alertDialogBuilder.setTitle(getResources().getString(R.string.error));
-			alertDialogBuilder.setMessage(getResources().getString(R.string.missing_file) + "\n" + missingFileNames);
-		    alertDialogBuilder.setPositiveButton(getResources().getString(R.string.fixit), new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int whichButton) {
-				    Toast.makeText(instance, R.string.unziping, Toast.LENGTH_SHORT).show();
-					unZipFile();
-				}
-			}).setNegativeButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int whichButton) {
-					finish();
-				}
-			});
-			alertDialogBuilder.setCancelable(false);
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
-			return false;
+			if (!flag) return false;
 		}
 		return true;
 	}
 
-	/*
+	/**
 	 * Run the app
+	 * @author HappyZ
 	 */
 	public void runApp() {
-		if(checkCurrentDirectory(true)){
-			Settings.LoadLocals(this); // load local settings
-			if(checkAppNeedFiles()){
-				if(mView == null){
-					mView = new MainView(this);
-					setContentView(mView);
-				}
-				mView.setFocusableInTouchMode(true);
-				mView.setFocusable(true);
-				mView.requestFocus();
-				System.gc();
-			}
+		Settings.LoadLocals(this); // load local settings
+		if (!checkGameFiles())
+			unZipFile();
+		if (mView == null) {
+			settingTitles = getResources().getStringArray(R.array.settings);
+			mDrawer = new DrawerLayout(this);
+			mFrame = new FrameLayout(this);
+			mSettings = new ListView(this);
+			mView = new MainView(this);
+			// MainView Added to Frame
+			mFrame.addView(mView);
+			// Frame Added to Drawer
+			mDrawer.addView(mFrame, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			// Settings Added to Drawer
+			DrawerLayout.LayoutParams mSettingsLP = new DrawerLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+			mSettingsLP.gravity = Gravity.START;
+			mSettings.setLayoutParams(mSettingsLP);
+			mSettings.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, settingTitles));
+			mDrawer.addView(mSettings);
+			// Initialize DrawerLayout view
+			setContentView(mDrawer);
 		}
+		mView.setFocusableInTouchMode(true);
+		mView.setFocusable(true);
+		mView.requestFocus();
+		System.gc();
 	}
 
-	/*
+	/**
 	 * Unzip the game files
+	 * @author HappyZ
 	 */
 	private void unZipFile(){
-		String dirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE + "/";
-		File dir = new File(dirPath);
-		try{
-			if (!dir.exists()) dir.mkdir();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		int size = 4096;
+		int size = 4096; // buffer 4kb
 		String strEntry;
 		try{
 			BufferedOutputStream dest = null; 
@@ -184,7 +214,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 					byte data[] = new byte[size];
 					strEntry = entry.getName();
 
-					File entryFile = new File(dirPath + strEntry);
+					File entryFile = new File(Globals.CurrentDirectoryPath + "/" + strEntry);
 					File entryDir = new File(entryFile.getParent());
 					if (!entryDir.exists()) {
 						entryDir.mkdirs();
@@ -206,47 +236,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-	    finish();
 	}
-	
 	
 	/**
-	 * Check the validity of the directory
-	 * @param	quitting	boolean to determine whether quit the app or not if check failed
-	 * @return				directory is valid (true) or invalid (false)
+	 * Implement onClickListener for all buttons
+	 * @author HappyZ
 	 */
-	public boolean checkCurrentDirectory(boolean quitting) {
-		String curDirPath = Globals.CurrentDirectoryPath;
-		if(curDirPath != null && !curDirPath.equals("")){
-			Toast.makeText(instance, "Game Directory is Loaded", Toast.LENGTH_SHORT).show();
-			return true;
-		}
-		
-		AlertDialog.Builder d = new AlertDialog.Builder(this);
-		d.setTitle(getResources().getString(R.string.error));
-		d.setMessage(getResources().getString(R.string.open_dir_error));
-		if(quitting){
-		    d.setPositiveButton(getResources().getString(R.string.fixit), new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Toast.makeText(instance, R.string.unziping, Toast.LENGTH_SHORT).show();
-					unZipFile();
-				}
-			}).setNegativeButton(getResources().getString(R.string.quit), new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					finish();
-				}
-			});
-		} else {
-		    d.setPositiveButton(getResources().getString(R.string.ok), null);
-		}
-		d.setCancelable(false);
-		d.create().show();
-		
-		return false;
-	}
-	
 	public void onClick(View arg) {
 		switch (arg.getId()) {
 		case R.id.cp_video_depth:
@@ -357,6 +352,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	
 	/**
 	 * Initialize the Configuration View
+	 * @author HappyZ
 	 */
 	private void initialConfigView(){
 		// video depth
@@ -392,207 +388,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		this.run = ((Button) findViewById(R.id.cp_run));
 		this.run.setOnClickListener(this);
 	}
-	
-	/*
-		TextView txt1 = new TextView(mActivity);
-		txt1.setTextSize(18.0f);
-		txt1.setText(getResources().getString(R.string.screen_orientation));
-		txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		
-		mScreenOrientationText = new TextView(mActivity);
-		mScreenOrientationText.setPadding(5, 0, 0, 0);
-		switch(Locals.ScreenOrientation){
-			case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
-				mScreenOrientationText.setText(getResources().getString(R.string.portrait));
-				break;
-			case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
-				mScreenOrientationText.setText(getResources().getString(R.string.landscape));
-				break;
-			case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
-				mScreenOrientationText.setText(getResources().getString(R.string.r_portrait));
-				break;
-			case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
-				mScreenOrientationText.setText(getResources().getString(R.string.r_landscape));
-				break;
-			default:
-				mScreenOrientationText.setText(getResources().getString(R.string.unknown));
-				break;
-		}
-		txtLayout.addView(mScreenOrientationText, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-	}
-	screenOrientationLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-	
-	Button btn = new Button(mActivity);
-	btn.setText(getResources().getString(R.string.change));
-	btn.setOnClickListener(new OnClickListener(){
-		public void onClick(View v){
-			String[] screenOrientationItems;
-			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD){
-				screenOrientationItems = new String[]{getResources().getString(R.string.portrait), getResources().getString(R.string.landscape), getResources().getString(R.string.r_portrait), getResources().getString(R.string.r_landscape)};
-			} else {
-				screenOrientationItems = new String[]{getResources().getString(R.string.portrait), getResources().getString(R.string.landscape)};
-			}
-			
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-			alertDialogBuilder.setTitle(getResources().getString(R.string.screen_orientation));
-			alertDialogBuilder.setItems(screenOrientationItems, new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int which)
-				{
-					switch(which){
-						case 0:
-							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-							mScreenOrientationText.setText(getResources().getString(R.string.portrait));
-							break;
-						case 1:
-							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-							mScreenOrientationText.setText(getResources().getString(R.string.landscape));
-							break;
-						case 2:
-							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-							mScreenOrientationText.setText(getResources().getString(R.string.r_portrait));
-							break;
-						case 3:
-							Locals.ScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-							mScreenOrientationText.setText(getResources().getString(R.string.r_landscape));
-							break;
-					}
-					Settings.SaveLocals(mActivity);
-				}
-			});
-			alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
-			alertDialogBuilder.setCancelable(true);
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
-		}
-	});
-	screenOrientationLayout.addView(btn, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-}
-mConfLayout.addView(screenOrientationLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-//Command Options
-for(int i = 0; i < Globals.APP_COMMAND_OPTIONS_ITEMS.length; i ++){
-	LinearLayout cmdOptLayout = new LinearLayout(mActivity);
-	{
-		final int index = i;
-		
-		CheckBox chk = new CheckBox(mActivity);
-		chk.setChecked(Locals.AppCommandOptions.indexOf(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]) >= 0);
-		chk.setOnClickListener(new OnClickListener(){
-			public void onClick(View v){
-				CheckBox c = (CheckBox)v;
-				if(!c.isChecked()){
-					int start = Locals.AppCommandOptions.indexOf(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]);
-					if(start == 0){
-						Locals.AppCommandOptions = Locals.AppCommandOptions.replace(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1], "");
-					} else if(start >= 0){
-						Locals.AppCommandOptions = Locals.AppCommandOptions.replace(" " + Globals.APP_COMMAND_OPTIONS_ITEMS[index][1], "");
-					}
-				} else {
-					if(Locals.AppCommandOptions.equals("")){
-						Locals.AppCommandOptions = Globals.APP_COMMAND_OPTIONS_ITEMS[index][1];
-					} else {
-						Locals.AppCommandOptions += " " + Globals.APP_COMMAND_OPTIONS_ITEMS[index][1];
-					}
-				}
-				Settings.SaveLocals(mActivity);
-			}
-		});
-		cmdOptLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		
-		LinearLayout txtLayout = new LinearLayout(mActivity);
-		txtLayout.setOrientation(LinearLayout.VERTICAL);
-		{
-			TextView txt1 = new TextView(mActivity);
-			txt1.setTextSize(18.0f);
-			txt1.setText(Globals.APP_COMMAND_OPTIONS_ITEMS[index][0]);
-			txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-			
-			TextView txt2 = new TextView(mActivity);
-			txt2.setPadding(5, 0, 0, 0);
-			txt2.setText(Globals.APP_COMMAND_OPTIONS_ITEMS[index][1]);
-			txtLayout.addView(txt2, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		}
-		cmdOptLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-	}
-	mConfLayout.addView(cmdOptLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-}
-
-//Environment
-mEnvironmentTextArray = new TextView[Globals.ENVIRONMENT_ITEMS.length];
-mEnvironmentButtonArray = new Button[Globals.ENVIRONMENT_ITEMS.length];
-for(int i = 0; i < Globals.ENVIRONMENT_ITEMS.length; i ++){
-	LinearLayout envLayout = new LinearLayout(mActivity);
-	{
-		final int index = i;
-		String value = Locals.EnvironmentMap.get(Globals.ENVIRONMENT_ITEMS[index][1]);
-		
-		CheckBox chk = new CheckBox(mActivity);
-		chk.setChecked(value != null);
-		chk.setOnClickListener(new OnClickListener(){
-			public void onClick(View v){
-				CheckBox c = (CheckBox)v;
-				if(!c.isChecked()){
-					Locals.EnvironmentMap.remove(Globals.ENVIRONMENT_ITEMS[index][1]);
-					mEnvironmentTextArray[index].setText("unset " + Globals.ENVIRONMENT_ITEMS[index][1]);
-					mEnvironmentButtonArray[index].setVisibility(View.GONE);
-				} else {
-					Locals.EnvironmentMap.put(Globals.ENVIRONMENT_ITEMS[index][1], Globals.ENVIRONMENT_ITEMS[index][2]);
-					mEnvironmentTextArray[index].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + Globals.ENVIRONMENT_ITEMS[index][2]);
-					mEnvironmentButtonArray[index].setVisibility(View.VISIBLE);
-				}
-				Settings.SaveLocals(mActivity);
-			}
-		});
-		envLayout.addView(chk, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		
-		LinearLayout txtLayout = new LinearLayout(mActivity);
-		txtLayout.setOrientation(LinearLayout.VERTICAL);
-		{
-			TextView txt1 = new TextView(mActivity);
-			txt1.setTextSize(18.0f);
-			txt1.setText(Globals.ENVIRONMENT_ITEMS[index][0]);
-			txtLayout.addView(txt1, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-			
-			mEnvironmentTextArray[i] = new TextView(mActivity);
-			mEnvironmentTextArray[i].setPadding(5, 0, 0, 0);
-			if(value == null){
-				mEnvironmentTextArray[i].setText("unset" + Globals.ENVIRONMENT_ITEMS[index][1]);
-			} else {
-				mEnvironmentTextArray[i].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + value);
-			}
-			txtLayout.addView(mEnvironmentTextArray[i], new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		}
-		envLayout.addView(txtLayout, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-		
-		mEnvironmentButtonArray[index] = new Button(mActivity);
-		mEnvironmentButtonArray[index].setText("Change");
-		mEnvironmentButtonArray[index].setOnClickListener(new OnClickListener(){
-			public void onClick(View v){
-				final EditText ed = new EditText(mActivity);
-				ed.setInputType(InputType.TYPE_CLASS_TEXT);
-				ed.setText(Locals.EnvironmentMap.get(Globals.ENVIRONMENT_ITEMS[index][1]));
-				
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-				alertDialogBuilder.setTitle(Globals.ENVIRONMENT_ITEMS[index][1]);
-				alertDialogBuilder.setView(ed);
-				alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int whichButton) {
-						String newval = ed.getText().toString();
-						Locals.EnvironmentMap.put(Globals.ENVIRONMENT_ITEMS[index][1], newval);
-						mEnvironmentTextArray[index].setText(Globals.ENVIRONMENT_ITEMS[index][1] + "=" + newval);
-						Settings.SaveLocals(mActivity);
-					}
-				});
-				alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), null);
-				alertDialogBuilder.setCancelable(true);
-				AlertDialog alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
-			}
-		});
-		mEnvironmentButtonArray[index].setVisibility(value != null ? View.VISIBLE : View.GONE);
-		envLayout.addView(mEnvironmentButtonArray[index], new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-	}
-	*/
 	
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -634,15 +429,14 @@ for(int i = 0; i < Globals.ENVIRONMENT_ITEMS.length; i ++){
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if( mView != null )
-		{
+		if( mView != null ) {
 			mView.onResume();
 		}
 		_isPaused = false;
 	}
 
 	@Override
-	protected void onDestroy()  {
+	protected void onDestroy() {
 		if( mView != null ){
 			mView.exitApp();
 			try {
@@ -652,11 +446,5 @@ for(int i = 0; i < Globals.ENVIRONMENT_ITEMS.length; i ++){
 		super.onDestroy();
 		System.exit(0);
 	}
-/*
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		// Do nothing here
-	}*/
 }
 

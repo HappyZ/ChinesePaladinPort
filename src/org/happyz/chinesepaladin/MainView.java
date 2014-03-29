@@ -1,5 +1,5 @@
 /*
- 2012/7 Created by AKIZUKI Katane
+ * 2012/7 Created by AKIZUKI Katane
  */
 
 package org.happyz.chinesepaladin;
@@ -63,7 +63,11 @@ public class MainView extends RelativeLayout {
 
 		nativeInitInputJavaCallbacks();
 	}
-
+	
+	public MainView(Context context) {
+	    super(context);
+	}
+	
 	protected void onPause() {
 		_isPaused = true;
 		mGLView.onPause();
@@ -525,7 +529,7 @@ public class MainView extends RelativeLayout {
 				MENU_ITEM_ID_SETTING_GAMEPAD_ARROW_BUTTON_AS_AXIS, Menu.NONE,
 				getResources().getString(R.string.as_axis));
 		menu_gamepad_arrow_button.add(Menu.NONE,
-				MENU_ITEM_ID_SETTING_GAMEPAD_ARROW_BUTTON_AS_AXIS, Menu.NONE,
+				MENU_ITEM_ID_SETTING_GAMEPAD_ARROW_BUTTON_AS_BUTTON, Menu.NONE,
 				getResources().getString(R.string.as_button));
 
 		SubMenu menu_appconfig = menu.addSubMenu(getResources().getString(

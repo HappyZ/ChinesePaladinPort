@@ -95,7 +95,6 @@ class Globals {
 	
 	//public static String CurrentDirectoryPathForLauncher = null;  //do not change
 	public static String CurrentDirectoryPath = null;             //do not change
-	public static String FileDownloadPath = "http://test.happyz.org/ChinesePal.zip";
 	//public static String[] CurrentDirectoryPathArray = null;      //do not change
 	//public static String[] CurrentDirectoryValidPathArray = null; //do not change
 	
