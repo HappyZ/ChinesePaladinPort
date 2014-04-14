@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <string name="about">About</string>
     <string name="app_launch_config">App Launch Config</string>
     <string name="app_name">Chinese Paladin</string>
@@ -17,7 +17,7 @@
     <string name="change_dir">Change\nDirectory</string>
     <string name="chinese_paladin_logo">Chinese Paladin Logo</string>
     <string name="choose_dir">Choose Directory</string>
-    <string name="close_appli">Close application?</string>
+    <string name="close_app">Close the game?</string>
     <string name="coming_soon">Feature is coming soon</string>
     <string name="current">Current:&#160;</string>
     <string name="current_dir">Current Directory</string>
@@ -32,9 +32,9 @@
     <string name="function">Function</string>
     <string name="gallery">Gallery</string>
     <string name="gamepad_arrow_button">GamePad Arrow Button</string>
-    <string name="gamepad_opacity">GamePad Opacity</string>
-    <string name="gamepad_pos">GamePad Position</string>
-    <string name="gamepad_size">GamePad Size</string>
+    <string name="gamepad_opacity">Opacity</string>
+    <string name="gamepad_pos">Position</string>
+    <string name="gamepad_size">Size</string>
     <string name="hide">Hide</string>
     <string name="key_cfg_mode">Key Config Mode ( END:MENU_KEY )</string>
     <string name="key_config">Key Config</string>
@@ -72,24 +72,31 @@
     <string name="unknown">Unknown</string>
     <string name="unziping">Unziping Files</string>
     <string name="video_depth">Video Depth</string>
+    <string name="video_pos">Video Position</string>
     <string name="video_x_margin">Video X-Margin</string>
-    <string name="video_x_pos">Video X-Position</string>
+    <string name="video_x_pos">Video\nX-Position</string>
     <string name="video_y_margin">Video Y-Margin</string>
-    <string name="video_y_pos">Video Y-Position</string>
+    <string name="video_y_pos">Video\nY-Position</string>
     <string name="yes">Yes</string>
-    
+
     <string-array name="settings">
-        <item>Function</item>
         <item>Touch Mode</item>
+        <item>GamePad Settings</item>
+        <item>Video Position</item>
+        <!-- <item>App Launch Config</item> -->
         <item>Quit</item>
-        <item>Key Config</item>
-        <item>Mouse Cursor</item>
-        <item>Video X-Position</item>
-        <item>Video Y-Position</item>
-        <item>GamePad Position</item>
-        <item>GamePad Size</item>
-        <item>GamePad Opacity</item>
-        <item>App Launch Config</item>
+        <!-- <item>Key Config</item> -->
+        <!-- <item>Mouse Cursor</item> -->
     </string-array>
-    
+
+    <string name="cp_menu_sub_gamepad_size_small">Tiny</string>
+    <string name="cp_menu_sub_gamepad_size_medium">Medium</string>
+    <string name="cp_menu_sub_gamepad_size_large">Huge</string>
+    <string name="cp_menu_sub_gamepad_pos_top">Top</string>
+    <string name="cp_menu_sub_gamepad_pos_center">Center</string>
+    <string name="cp_menu_sub_gamepad_pos_bottom">Bottom</string>
+    <string name="cp_menu_sub_gamepad_opacity_full">0%</string>
+    <string name="cp_menu_sub_gamepad_opacity_half">50%</string>
+    <string name="cp_menu_sub_gamepad_opacity_none">100%</string>
+
 </resources>

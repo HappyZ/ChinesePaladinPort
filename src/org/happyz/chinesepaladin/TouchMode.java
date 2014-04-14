@@ -1,11 +1,12 @@
 /*
- 2012/7 Created by AKIZUKI Katane
+ * 2012/7 Created by AKIZUKI Katane
+ * 2014/4 Modified by HappyZ
  */
 
 package org.happyz.chinesepaladin;
 
 import android.content.Context;
-import android.view.MotionEvent;
+//import android.view.MotionEvent;
 
 import java.lang.String;
 
@@ -21,95 +22,73 @@ import android.widget.RelativeLayout.LayoutParams;
 
 class TouchMode implements DifferentTouchInput.OnInputEventListener {
 	public static TouchMode getTouchMode(String name, MainView mainView) {
-		if(name.equals("Touch")) return new TouchTouchMode(mainView);
-		if(name.equals("TrackPad")) return new TrackPadTouchMode(mainView);
+//		if(name.equals("Touch")) return new TouchTouchMode(mainView);
+//		if(name.equals("TrackPad")) return new TrackPadTouchMode(mainView);
 		if(name.equals("GamePad")) return new GamePadTouchMode(mainView);
 		return new InvalidTouchMode(mainView);
 	}
 	
-	private LinearLayout mLayoutLeft = null;
-	private Button[] mButtonLeftArray = null;
+//	private class OnButtonTouchListener implements View.OnTouchListener {
+//		//private MainView mMainView;
+//		private int mKey;
+//		
+//		public OnButtonTouchListener(MainView mainView, int key) {
+//			//mMainView = mainView;
+//			mKey = key;
+//		}
+//		
+//		public boolean onTouch(View v, MotionEvent event){
+//			v.onTouchEvent(event);
+//			switch(event.getAction()){
+//				case MotionEvent.ACTION_DOWN:
+//					mMainView.nativeKey( mKey, 1 );
+//					break;
+//				case MotionEvent.ACTION_UP:
+//					mMainView.nativeKey( mKey, 0 );
+//					break;
+//			}
+//			return true;
+//		}
+//	}
 	
-	private LinearLayout mLayoutRight = null;
-	private Button[] mButtonRightArray = null;
-	
-	private LinearLayout mLayoutTop = null;
-	private Button[] mButtonTopArray = null;
-	
-	private LinearLayout mLayoutBottom = null;
-	private Button[] mButtonBottomArray = null;
-	
-	private int mXMargin = 0;
-	private int mYMargin = 0;
-	
-	private int mScreenX = 0;
-	private int mScreenY = 0;
-	private int mScreenWidth  = 0;
-	private int mScreenHeight = 0;
-
-	private MainView mMainView = null;
-	
-	private class OnButtonTouchListener implements View.OnTouchListener {
-		//private MainView mMainView;
-		private int mKey;
-		
-		public OnButtonTouchListener(MainView mainView, int key) {
-			//mMainView = mainView;
-			mKey = key;
-		}
-		
-		public boolean onTouch(View v, MotionEvent event){
-			v.onTouchEvent(event);
-			switch(event.getAction()){
-				case MotionEvent.ACTION_DOWN:
-					mMainView.nativeKey( mKey, 1 );
-					break;
-				case MotionEvent.ACTION_UP:
-					mMainView.nativeKey( mKey, 0 );
-					break;
-			}
-			return true;
-		}
-	}
-	
-	private Button newButtonToLayout(LinearLayout layout, int key) {
-		Button button = new Button(mMainView.getActivity());
-		button.setOnTouchListener(new OnButtonTouchListener(mMainView, key));
-		layout.addView(button, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-		return button;
-	}
+//	private Button newButtonToLayout(LinearLayout layout, int key) {
+//		Button button = new Button(mMainView.getActivity());
+//		button.setOnTouchListener(new OnButtonTouchListener(mMainView, key));
+//		layout.addView(button, new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+//		return button;
+//	}
 	
 	public TouchMode(MainView mainView) {
 		mMainView = mainView;
 		mLayoutLeft = new LinearLayout(mMainView.getActivity());
 		mLayoutLeft.setOrientation(LinearLayout.VERTICAL);
 		mButtonLeftArray = new Button[Globals.BUTTON_LEFT_MAX];
-		int len = mButtonLeftArray.length;
-		for(int i = 0; i < len; i++){
-			mButtonLeftArray[i] = newButtonToLayout(mLayoutLeft, Globals.BUTTON_LEFT_KEY_ARRAY[i]);
-		}
+//		int len = mButtonLeftArray.length;
+//		for(int i = 0; i < len; i++){
+//			mButtonLeftArray[i] = newButtonToLayout(mLayoutLeft, Globals.BUTTON_LEFT_KEY_ARRAY[i]);
+//		}
 		
 		mLayoutRight = new LinearLayout(mMainView.getActivity());
 		mLayoutRight.setOrientation(LinearLayout.VERTICAL);
 		mButtonRightArray = new Button[Globals.BUTTON_RIGHT_MAX];
-		len = mButtonRightArray.length;
-		for(int i = 0; i < len; i++){
-			mButtonRightArray[i] = newButtonToLayout(mLayoutRight, Globals.BUTTON_RIGHT_KEY_ARRAY[i]);
-		}
+//		len = mButtonRightArray.length;
+//		for(int i = 0; i < len; i++){
+//			mButtonRightArray[i] = newButtonToLayout(mLayoutRight, Globals.BUTTON_RIGHT_KEY_ARRAY[i]);
+//		}
 		
 		mLayoutTop = new LinearLayout(mMainView.getActivity());
 		mLayoutTop.setOrientation(LinearLayout.HORIZONTAL);
 		mButtonTopArray = new Button[Globals.BUTTON_BOTTOM_MAX];
-		for(int i = 0; i < mButtonTopArray.length; i ++){
-			mButtonTopArray[i] = newButtonToLayout(mLayoutTop, Globals.BUTTON_TOP_KEY_ARRAY[i]);
-		}
+//		for(int i = 0; i < mButtonTopArray.length; i ++){
+//			mButtonTopArray[i] = newButtonToLayout(mLayoutTop, Globals.BUTTON_TOP_KEY_ARRAY[i]);
+//		}
 		
 		mLayoutBottom = new LinearLayout(mMainView.getActivity());
 		mLayoutBottom.setOrientation(LinearLayout.HORIZONTAL);
 		mButtonBottomArray = new Button[Globals.BUTTON_BOTTOM_MAX];
-		for(int i = 0; i < mButtonBottomArray.length; i ++){
-			mButtonBottomArray[i] = newButtonToLayout(mLayoutBottom, Globals.BUTTON_BOTTOM_KEY_ARRAY[i]);
-		}
+//		for(int i = 0; i < mButtonBottomArray.length; i ++){
+//			mButtonBottomArray[i] = newButtonToLayout(mLayoutBottom, Globals.BUTTON_BOTTOM_KEY_ARRAY[i]);
+//		}
 	}
 	
 	protected MainView getMainView() {
@@ -158,6 +137,7 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener {
 		mMainView.setMouseCursorRGB(0, 0, 0, 255, 255, 255);
 	}
 	
+	@SuppressWarnings("unused")
 	void update() {
 		int i;
 		
@@ -304,308 +284,37 @@ class TouchMode implements DifferentTouchInput.OnInputEventListener {
 	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount){}
 	
 	public void onMouseButtonEvent(int buttonId, int pressed){}
-}
+	
+	// Declarations
+	private LinearLayout mLayoutLeft = null;
+	private Button[] mButtonLeftArray = null;
+	
+	private LinearLayout mLayoutRight = null;
+	private Button[] mButtonRightArray = null;
+	
+	private LinearLayout mLayoutTop = null;
+	private Button[] mButtonTopArray = null;
+	
+	private LinearLayout mLayoutBottom = null;
+	private Button[] mButtonBottomArray = null;
+	
+	private int mXMargin = 0;
+	private int mYMargin = 0;
+	
+	private int mScreenX = 0;
+	private int mScreenY = 0;
+	private int mScreenWidth  = 0;
+	private int mScreenHeight = 0;
 
-class InvalidTouchMode extends TouchMode {
-	private boolean mIsMouseShowed = true;
-	
-	public InvalidTouchMode(MainView mainView) {
-		super(mainView);
-	}
-	
-	@Override
-	void setup() {
-		super.setup();
-		mIsMouseShowed = getMainView().isMouseCursorShowed();
-		getMainView().showMouseCursor(false);
-	}
-	
-	@Override
-	void cleanup() {
-		if(!getMainView().isMouseCursorShowed()){
-			getMainView().showMouseCursor(mIsMouseShowed);
-		}
-		super.cleanup();
-	}
-	
-	@Override
-	public void onKeyEvent(int keyCode, int pressed) {
-		getMainView().nativeKey( keyCode, pressed );
-	}
-}
-
-class TouchTouchMode extends TouchMode {
-	private int mFirstPointerId = -1;
-	private boolean mRightClickMode = false;
-
-	public TouchTouchMode(MainView mainView) {
-		super(mainView);
-	}
-	
-	@Override
-	public void onKeyEvent(int keyCode, int pressed) {
-		getMainView().nativeKey( keyCode, pressed );
-	}
-	
-	@Override
-	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
-		if(mFirstPointerId < 0 && touchCount == 1 && action == Mouse.SDL_FINGER_DOWN){
-			mFirstPointerId = pointerId;
-		}
-		
-		if(pointerId == mFirstPointerId){
-			int wx = x - getMainView().getGLViewX();
-			int wy = y - getMainView().getGLViewY();
-			
-			getMainView().setMousePoint(wx, wy);
-			getMainView().nativeMotionEvent( wx, wy );
-			
-			//Log.i("onMotionEvent", "action:" + action + " x=" + wx + " y=" + wy);
-			
-			switch(action){
-				case Mouse.SDL_FINGER_DOWN:
-					onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 1);
-					break;
-				case Mouse.SDL_FINGER_UP:
-					onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 0);
-					mFirstPointerId = -1;
-					break;
-			}
-		}
-	}
-
-	@Override
-	public void onMouseButtonEvent(int buttonId, int pressed) {
-		getMainView().nativeMouseButtonsPressed( (mRightClickMode ? MotionEvent.BUTTON_SECONDARY : buttonId), pressed );
-		if(pressed == 0){
-			mRightClickMode = false;
-			getMainView().setMouseCursorRGB(0, 0, 0, 255, 255, 255);
-		}
-	}
-}
-
-class TrackPadTouchMode extends TouchMode implements View.OnTouchListener {
-	private int mFirstPointerId = -1;
-	private int mFirstPointX = 0;
-	private int mFirstPointY = 0;
-	private int mFirstMousePointX = 0;
-	private int mFirstMousePointY = 0;
-	
-	private int mSecondPointerId = -1;
-	
-	private boolean mDirectTouchMode = false;
-	private boolean mDirectTouchDown = false;
-
-	private Button mRightClickButton = null;
-	private Button mLeftClickButton = null;
-	
-	public TrackPadTouchMode(MainView mainView) {
-		super(mainView);
-		
-		setXMargin(1);
-		
-		mRightClickButton = new Button(mainView.getActivity());
-		mRightClickButton.setText("R");
-		mRightClickButton.setOnTouchListener(this);
-		
-		mLeftClickButton = new Button(mainView.getActivity());
-		mLeftClickButton.setText("L");
-		mLeftClickButton.setOnTouchListener(this);
-	}
-	
-	public boolean onTouch(View v, MotionEvent event) {
-		if(v == mLeftClickButton || v == mRightClickButton){
-			v.onTouchEvent(event);
-			
-			int buttonId = (v == mLeftClickButton ? MotionEvent.BUTTON_PRIMARY : MotionEvent.BUTTON_SECONDARY);
-			switch(event.getAction()){
-				case MotionEvent.ACTION_DOWN:
-					getMainView().nativeMouseButtonsPressed( buttonId, 1 );
-					break;
-				case MotionEvent.ACTION_UP:
-					getMainView().nativeMouseButtonsPressed( buttonId, 0 );
-					break;
-				default:
-					break;
-			}
-		}
-		return true;
-	}
-	
-	@Override
-	void setup() {
-		super.setup();
-		
-		getMainView().setMouseCursorRGB(120, 120, 120, 255, 255, 255);
-		
-		getMainView().addView(mLeftClickButton);
-		getMainView().addView(mRightClickButton);
-	}
-	
-	@Override
-	void cleanup() {
-		getMainView().removeView(mLeftClickButton);
-		getMainView().removeView(mRightClickButton);
-		
-		super.cleanup();
-	}
-	
-	@Override
-	void update() {
-		super.update();
-		
-		int x;
-		int y;
-		
-		x = getScreenX();
-		if(Locals.VideoYPosition == 0){
-			y = getScreenY() + ((getScreenHeight() - getMainView().getGLViewHeight())  / 2);
-		} else if(Locals.VideoYPosition < 0){
-			y = getScreenY();
-		} else {
-			y = getScreenY() + (getScreenHeight() - getMainView().getGLViewHeight());
-		}
-		
-		getMainView().setGLViewPos(x, y);
-		
-		int rx, ry, rw, rh;
-		int lx, ly, lw, lh;
-		
-		if(getMainView().getGLViewWidth() + (getMainView().getGLViewWidth() / 18) < getScreenWidth()){
-			rx = getMainView().getGLViewX() + getMainView().getGLViewWidth();
-			ry = getScreenY();
-			rw = getScreenX() + getScreenWidth() - rx;
-			rh = (getScreenHeight() / 8) * 1;
-		} else {
-			rw = getMainView().getGLViewWidth() / 18;
-			rh = (getScreenHeight() / 8) * 1;
-			rx = getScreenX() + getScreenWidth() - rw;
-			ry = getScreenY();
-		}
-		
-		lx = rx;
-		ly = ry + rh;
-		lw = rw;
-		lh = (getScreenHeight() / 8) * 3;
-
-		LayoutParams params = new LayoutParams(rw, rh);
-		params.setMargins(rx,ry,0,0);
-		mRightClickButton.setLayoutParams(new RelativeLayout.LayoutParams(params));
-		params = new LayoutParams(lw, lh);
-		params.setMargins(lx,ly,0,0);
-		mLeftClickButton.setLayoutParams(new RelativeLayout.LayoutParams(params));
-	}
-
-	@Override
-	public void onKeyEvent(int keyCode, int pressed) {
-		getMainView().nativeKey( keyCode, pressed );
-	}
-	
-	@Override
-	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
-		if(action == Mouse.SDL_FINGER_DOWN){
-			if(mFirstPointerId < 0){
-				mFirstPointerId = pointerId;
-				mFirstPointX = x;
-				mFirstPointY = y;
-				mFirstMousePointX = getMainView().getMousePointX();
-				mFirstMousePointY = getMainView().getMousePointY();
-				if(mDirectTouchMode && x >= getMainView().getGLViewX() && x < getMainView().getGLViewX() + getMainView().getGLViewWidth() && y >= getMainView().getGLViewY() && y < getMainView().getGLViewY() + getMainView().getGLViewHeight()){
-					mDirectTouchDown = true;
-				}
-			} else if(mSecondPointerId < 0){
-				mSecondPointerId = pointerId;
-				onMouseButtonEvent( MotionEvent.BUTTON_PRIMARY, 1 );
-			}
-		}
-		
-		if(pointerId == mFirstPointerId){
-			if(mDirectTouchDown){
-				int wx = x - getMainView().getGLViewX();
-				int wy = y - getMainView().getGLViewY();
-				
-				getMainView().setMousePoint(wx, wy);
-				getMainView().nativeMotionEvent( wx, wy );
-				
-				switch(action){
-					case Mouse.SDL_FINGER_DOWN:
-						onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 1);
-						break;
-					case Mouse.SDL_FINGER_UP:
-						onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 0);
-						break;
-				}
-			} else {
-				int wx = mFirstMousePointX + (x - mFirstPointX);
-				int wy = mFirstMousePointY + (y - mFirstPointY);
-				if(wx < 0){
-					wx = 0;
-				} else if(wx >= getMainView().getGLViewWidth()){
-					wx = getMainView().getGLViewWidth() - 1;
-				}
-				if(wy < 0){
-					wy = 0;
-				} else if(wy >= getMainView().getGLViewHeight()){
-					wy = getMainView().getGLViewHeight() - 1;
-				}
-			
-				getMainView().setMousePoint( wx, wy );
-				getMainView().nativeMotionEvent( wx, wy );
-			}
-		}
-		
-		if(action == Mouse.SDL_FINGER_UP){
-			if(pointerId == mFirstPointerId){
-				mFirstPointerId = -1;
-				if(mDirectTouchDown){
-					mDirectTouchDown = false;
-				}
-			} else if(pointerId == mSecondPointerId){
-				mSecondPointerId = -1;
-				onMouseButtonEvent( MotionEvent.BUTTON_PRIMARY, 0 );
-			}
-		}
-	}
-	
-	@Override
-	public void onMouseButtonEvent(int buttonId, int pressed) {
-		int action = (pressed == 0 ? MotionEvent.ACTION_UP : MotionEvent.ACTION_DOWN);
-		MotionEvent event = MotionEvent.obtain( 0L, 0L, action, 0.0f, 0.0f, 0 );
-		
-		switch(buttonId){
-			case MotionEvent.BUTTON_PRIMARY:
-				onTouch(mLeftClickButton, event);
-				break;
-			case MotionEvent.BUTTON_SECONDARY:
-				onTouch(mRightClickButton, event);
-				break;
-			default:
-				getMainView().nativeMouseButtonsPressed( buttonId, pressed );
-				break;
-		}
-	}
+	private MainView mMainView = null;
 }
 
 class GamePadTouchMode extends TouchMode {
 	class ArrowButton extends View {
-		public final static int BUTTON_NONE  = 0;
-		public final static int BUTTON_UP    = 1 << Globals.GAMEPAD_BUTTON_ARROW_UP_INDEX;
-		public final static int BUTTON_RIGHT = 1 << Globals.GAMEPAD_BUTTON_ARROW_RIGHT_INDEX;
-		public final static int BUTTON_DOWN  = 1 << Globals.GAMEPAD_BUTTON_ARROW_DOWN_INDEX;
-		public final static int BUTTON_LEFT  = 1 << Globals.GAMEPAD_BUTTON_ARROW_LEFT_INDEX;
-		
-		private Path mPath;
-		private Path mTouchPath;
-		private Paint mPaint;
-		
-		private int mButtonState = 0;
-		
 		public ArrowButton(Context c) {
 			super(c);
-			
 			mPath = new Path();
 			mTouchPath = new Path();
-			
 			mPaint = new Paint();
 			setBackgroundColor(Color.TRANSPARENT);
 		}
@@ -696,21 +405,21 @@ class GamePadTouchMode extends TouchMode {
 			
 			invalidate();
 		}
-	}
-	
-	class ActionButton extends View {
+
 		public final static int BUTTON_NONE  = 0;
-		public final static int BUTTON_UP    = 1 << Globals.GAMEPAD_BUTTON_ACTION_UP_INDEX;
-		public final static int BUTTON_RIGHT = 1 << Globals.GAMEPAD_BUTTON_ACTION_RIGHT_INDEX;
-		public final static int BUTTON_DOWN  = 1 << Globals.GAMEPAD_BUTTON_ACTION_DOWN_INDEX;
-		public final static int BUTTON_LEFT  = 1 << Globals.GAMEPAD_BUTTON_ACTION_LEFT_INDEX;
+		public final static int BUTTON_UP    = 1 << Globals.GAMEPAD_BUTTON_ARROW_UP_INDEX;
+		public final static int BUTTON_RIGHT = 1 << Globals.GAMEPAD_BUTTON_ARROW_RIGHT_INDEX;
+		public final static int BUTTON_DOWN  = 1 << Globals.GAMEPAD_BUTTON_ARROW_DOWN_INDEX;
+		public final static int BUTTON_LEFT  = 1 << Globals.GAMEPAD_BUTTON_ARROW_LEFT_INDEX;
 		
 		private Path mPath;
 		private Path mTouchPath;
 		private Paint mPaint;
 		
 		private int mButtonState = 0;
-		
+	}
+	
+	class ActionButton extends View {
 		public ActionButton(Context c)
 		{
 			super(c);
@@ -794,24 +503,19 @@ class GamePadTouchMode extends TouchMode {
 			
 			invalidate();
 		}
+		
+		public final static int BUTTON_NONE  = 0;
+		public final static int BUTTON_UP    = 1 << Globals.GAMEPAD_BUTTON_ACTION_UP_INDEX;
+		public final static int BUTTON_RIGHT = 1 << Globals.GAMEPAD_BUTTON_ACTION_RIGHT_INDEX;
+		public final static int BUTTON_DOWN  = 1 << Globals.GAMEPAD_BUTTON_ACTION_DOWN_INDEX;
+		public final static int BUTTON_LEFT  = 1 << Globals.GAMEPAD_BUTTON_ACTION_LEFT_INDEX;
+		
+		private Path mPath;
+		private Path mTouchPath;
+		private Paint mPaint;
+		
+		private int mButtonState = 0;
 	}
-	
-	private boolean mIsMouseShowed = true;
-	
-	private ArrowButton mArrowButton = null;
-	private int mArrowButtonX = 0;
-	private int mArrowButtonY = 0;
-	private int mArrowButtonWidth  = 0;
-	private int mArrowButtonHeight = 0;
-	private int mArrowButtonPointerId = -1;
-	private int mArrowButtonState = ArrowButton.BUTTON_NONE;
-	
-	private ActionButton mActionButton = null;
-	private int mActionButtonX = 0;
-	private int mActionButtonY = 0;
-	private int mActionButtonWidth  = 0;
-	private int mActionButtonHeight = 0;
-	private int[] mActionButtonPointerIdAry = null;
 	
 	public GamePadTouchMode(MainView mainView) {
 		super(mainView);
@@ -831,7 +535,8 @@ class GamePadTouchMode extends TouchMode {
 		
 		mIsMouseShowed = getMainView().isMouseCursorShowed();
 		getMainView().showMouseCursor(false);
-		
+
+//		setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		getMainView().addView(mArrowButton);
 		getMainView().addView(mActionButton);
 	}
@@ -862,13 +567,15 @@ class GamePadTouchMode extends TouchMode {
 
 		LayoutParams params = new LayoutParams(mArrowButtonWidth, mArrowButtonHeight);
 		params.setMargins(mArrowButtonX,mArrowButtonY,0,0);
+//		mArrowButton.setPadding(mArrowButtonX,mArrowButtonY,0,0);
 		mArrowButton.setLayoutParams(new RelativeLayout.LayoutParams(params));
 		
 		mActionButtonX = getScreenX() + getScreenWidth() - mActionButtonWidth;
 		mActionButtonY = getScreenY() + ((getScreenHeight() - mActionButtonHeight) * Globals.GamePadPosition / 100);
 
 		params = new LayoutParams(mActionButtonWidth, mActionButtonHeight);
-		params.setMargins(mActionButtonX,mActionButtonY,0,0);
+		params.setMargins(mActionButtonX, mActionButtonY, 0, 0);
+//		mActionButton.setPadding(mArrowButtonX,mArrowButtonY,0,0);
 		mActionButton.setLayoutParams(new RelativeLayout.LayoutParams(params));
 		
 		mArrowButton.invalidate();
@@ -1010,4 +717,304 @@ class GamePadTouchMode extends TouchMode {
 	
 	@Override
 	public void onMouseButtonEvent(int buttonId, int pressed) {}
+	
+	// Declarations
+	private boolean mIsMouseShowed = true;
+	
+	private ArrowButton mArrowButton = null;
+	private int mArrowButtonX = 0;
+	private int mArrowButtonY = 0;
+	private int mArrowButtonWidth  = 0;
+	private int mArrowButtonHeight = 0;
+	private int mArrowButtonPointerId = -1;
+	private int mArrowButtonState = ArrowButton.BUTTON_NONE;
+	
+	private ActionButton mActionButton = null;
+	private int mActionButtonX = 0;
+	private int mActionButtonY = 0;
+	private int mActionButtonWidth  = 0;
+	private int mActionButtonHeight = 0;
+	private int[] mActionButtonPointerIdAry = null;
 }
+
+
+//class TrackPadTouchMode extends TouchMode implements View.OnTouchListener {
+//	private int mFirstPointerId = -1;
+//	private int mFirstPointX = 0;
+//	private int mFirstPointY = 0;
+//	private int mFirstMousePointX = 0;
+//	private int mFirstMousePointY = 0;
+//	
+//	private int mSecondPointerId = -1;
+//	
+//	private boolean mDirectTouchMode = false;
+//	private boolean mDirectTouchDown = false;
+//
+//	private Button mRightClickButton = null;
+//	private Button mLeftClickButton = null;
+//	
+//	public TrackPadTouchMode(MainView mainView) {
+//		super(mainView);
+//		
+//		setXMargin(1);
+//		
+//		mRightClickButton = new Button(mainView.getActivity());
+//		mRightClickButton.setText("R");
+//		mRightClickButton.setOnTouchListener(this);
+//		
+//		mLeftClickButton = new Button(mainView.getActivity());
+//		mLeftClickButton.setText("L");
+//		mLeftClickButton.setOnTouchListener(this);
+//	}
+//	
+//	public boolean onTouch(View v, MotionEvent event) {
+//		if(v == mLeftClickButton || v == mRightClickButton){
+//			v.onTouchEvent(event);
+//			
+//			int buttonId = (v == mLeftClickButton ? MotionEvent.BUTTON_PRIMARY : MotionEvent.BUTTON_SECONDARY);
+//			switch(event.getAction()){
+//				case MotionEvent.ACTION_DOWN:
+//					getMainView().nativeMouseButtonsPressed( buttonId, 1 );
+//					break;
+//				case MotionEvent.ACTION_UP:
+//					getMainView().nativeMouseButtonsPressed( buttonId, 0 );
+//					break;
+//				default:
+//					break;
+//			}
+//		}
+//		return true;
+//	}
+//	
+//	@Override
+//	void setup() {
+//		super.setup();
+//		
+//		getMainView().setMouseCursorRGB(120, 120, 120, 255, 255, 255);
+//		
+//		getMainView().addView(mLeftClickButton);
+//		getMainView().addView(mRightClickButton);
+//	}
+//	
+//	@Override
+//	void cleanup() {
+//		getMainView().removeView(mLeftClickButton);
+//		getMainView().removeView(mRightClickButton);
+//		
+//		super.cleanup();
+//	}
+//	
+//	@Override
+//	void update() {
+//		super.update();
+//		
+//		int x;
+//		int y;
+//		
+//		x = getScreenX();
+//		if(Locals.VideoYPosition == 0){
+//			y = getScreenY() + ((getScreenHeight() - getMainView().getGLViewHeight())  / 2);
+//		} else if(Locals.VideoYPosition < 0){
+//			y = getScreenY();
+//		} else {
+//			y = getScreenY() + (getScreenHeight() - getMainView().getGLViewHeight());
+//		}
+//		
+//		getMainView().setGLViewPos(x, y);
+//		
+//		int rx, ry, rw, rh;
+//		int lx, ly, lw, lh;
+//		
+//		if(getMainView().getGLViewWidth() + (getMainView().getGLViewWidth() / 18) < getScreenWidth()){
+//			rx = getMainView().getGLViewX() + getMainView().getGLViewWidth();
+//			ry = getScreenY();
+//			rw = getScreenX() + getScreenWidth() - rx;
+//			rh = (getScreenHeight() / 8) * 1;
+//		} else {
+//			rw = getMainView().getGLViewWidth() / 18;
+//			rh = (getScreenHeight() / 8) * 1;
+//			rx = getScreenX() + getScreenWidth() - rw;
+//			ry = getScreenY();
+//		}
+//		
+//		lx = rx;
+//		ly = ry + rh;
+//		lw = rw;
+//		lh = (getScreenHeight() / 8) * 3;
+//
+//		LayoutParams params = new LayoutParams(rw, rh);
+//		params.setMargins(rx,ry,0,0);
+//		mRightClickButton.setLayoutParams(new RelativeLayout.LayoutParams(params));
+//		params = new LayoutParams(lw, lh);
+//		params.setMargins(lx,ly,0,0);
+//		mLeftClickButton.setLayoutParams(new RelativeLayout.LayoutParams(params));
+//	}
+//
+//	@Override
+//	public void onKeyEvent(int keyCode, int pressed) {
+//		getMainView().nativeKey( keyCode, pressed );
+//	}
+//	
+//	@Override
+//	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
+//		if(action == Mouse.SDL_FINGER_DOWN){
+//			if(mFirstPointerId < 0){
+//				mFirstPointerId = pointerId;
+//				mFirstPointX = x;
+//				mFirstPointY = y;
+//				mFirstMousePointX = getMainView().getMousePointX();
+//				mFirstMousePointY = getMainView().getMousePointY();
+//				if(mDirectTouchMode && x >= getMainView().getGLViewX() && x < getMainView().getGLViewX() + getMainView().getGLViewWidth() && y >= getMainView().getGLViewY() && y < getMainView().getGLViewY() + getMainView().getGLViewHeight()){
+//					mDirectTouchDown = true;
+//				}
+//			} else if(mSecondPointerId < 0){
+//				mSecondPointerId = pointerId;
+//				onMouseButtonEvent( MotionEvent.BUTTON_PRIMARY, 1 );
+//			}
+//		}
+//		
+//		if(pointerId == mFirstPointerId){
+//			if(mDirectTouchDown){
+//				int wx = x - getMainView().getGLViewX();
+//				int wy = y - getMainView().getGLViewY();
+//				
+//				getMainView().setMousePoint(wx, wy);
+//				getMainView().nativeMotionEvent( wx, wy );
+//				
+//				switch(action){
+//					case Mouse.SDL_FINGER_DOWN:
+//						onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 1);
+//						break;
+//					case Mouse.SDL_FINGER_UP:
+//						onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 0);
+//						break;
+//				}
+//			} else {
+//				int wx = mFirstMousePointX + (x - mFirstPointX);
+//				int wy = mFirstMousePointY + (y - mFirstPointY);
+//				if(wx < 0){
+//					wx = 0;
+//				} else if(wx >= getMainView().getGLViewWidth()){
+//					wx = getMainView().getGLViewWidth() - 1;
+//				}
+//				if(wy < 0){
+//					wy = 0;
+//				} else if(wy >= getMainView().getGLViewHeight()){
+//					wy = getMainView().getGLViewHeight() - 1;
+//				}
+//			
+//				getMainView().setMousePoint( wx, wy );
+//				getMainView().nativeMotionEvent( wx, wy );
+//			}
+//		}
+//		
+//		if(action == Mouse.SDL_FINGER_UP){
+//			if(pointerId == mFirstPointerId){
+//				mFirstPointerId = -1;
+//				if(mDirectTouchDown){
+//					mDirectTouchDown = false;
+//				}
+//			} else if(pointerId == mSecondPointerId){
+//				mSecondPointerId = -1;
+//				onMouseButtonEvent( MotionEvent.BUTTON_PRIMARY, 0 );
+//			}
+//		}
+//	}
+//	
+//	@Override
+//	public void onMouseButtonEvent(int buttonId, int pressed) {
+//		int action = (pressed == 0 ? MotionEvent.ACTION_UP : MotionEvent.ACTION_DOWN);
+//		MotionEvent event = MotionEvent.obtain( 0L, 0L, action, 0.0f, 0.0f, 0 );
+//		
+//		switch(buttonId){
+//			case MotionEvent.BUTTON_PRIMARY:
+//				onTouch(mLeftClickButton, event);
+//				break;
+//			case MotionEvent.BUTTON_SECONDARY:
+//				onTouch(mRightClickButton, event);
+//				break;
+//			default:
+//				getMainView().nativeMouseButtonsPressed( buttonId, pressed );
+//				break;
+//		}
+//	}
+//}
+
+class InvalidTouchMode extends TouchMode {
+	private boolean mIsMouseShowed = true;
+	
+	public InvalidTouchMode(MainView mainView) {
+		super(mainView);
+	}
+	
+	@Override
+	void setup() {
+		super.setup();
+		mIsMouseShowed = getMainView().isMouseCursorShowed();
+		getMainView().showMouseCursor(false);
+	}
+	
+	@Override
+	void cleanup() {
+		if(!getMainView().isMouseCursorShowed()){
+			getMainView().showMouseCursor(mIsMouseShowed);
+		}
+		super.cleanup();
+	}
+	
+	@Override
+	public void onKeyEvent(int keyCode, int pressed) {
+		getMainView().nativeKey( keyCode, pressed );
+	}
+}
+//
+//class TouchTouchMode extends TouchMode {
+//	private int mFirstPointerId = -1;
+//	private boolean mRightClickMode = false;
+//
+//	public TouchTouchMode(MainView mainView) {
+//		super(mainView);
+//	}
+//	
+//	@Override
+//	public void onKeyEvent(int keyCode, int pressed) {
+//		getMainView().nativeKey( keyCode, pressed );
+//	}
+//	
+//	@Override
+//	public void onMotionEvent(int x, int y, int action, int pointerId, int pressure, int radius, int touchCount) {
+//		if(mFirstPointerId < 0 && touchCount == 1 && action == Mouse.SDL_FINGER_DOWN){
+//			mFirstPointerId = pointerId;
+//		}
+//		
+//		if(pointerId == mFirstPointerId){
+//			int wx = x - getMainView().getGLViewX();
+//			int wy = y - getMainView().getGLViewY();
+//			
+//			getMainView().setMousePoint(wx, wy);
+//			getMainView().nativeMotionEvent( wx, wy );
+//			
+//			//Log.i("onMotionEvent", "action:" + action + " x=" + wx + " y=" + wy);
+//			
+//			switch(action){
+//				case Mouse.SDL_FINGER_DOWN:
+//					onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 1);
+//					break;
+//				case Mouse.SDL_FINGER_UP:
+//					onMouseButtonEvent(MotionEvent.BUTTON_PRIMARY, 0);
+//					mFirstPointerId = -1;
+//					break;
+//			}
+//		}
+//	}
+//
+//	@Override
+//	public void onMouseButtonEvent(int buttonId, int pressed) {
+//		getMainView().nativeMouseButtonsPressed( (mRightClickMode ? MotionEvent.BUTTON_SECONDARY : buttonId), pressed );
+//		if(pressed == 0){
+//			mRightClickMode = false;
+//			getMainView().setMouseCursorRGB(0, 0, 0, 255, 255, 255);
+//		}
+//	}
+//	
+//}

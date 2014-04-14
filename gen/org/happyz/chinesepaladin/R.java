@@ -9,6 +9,9 @@ package org.happyz.chinesepaladin;
 
 public final class R {
     public static final class array {
+        /**  <item>Key Config</item> 
+ <item>Mouse Cursor</item> 
+         */
         public static final int settings=0x7f070000;
     }
     public static final class attr {
@@ -35,10 +38,25 @@ public final class R {
         public static final int cp_screen_ratio=0x7f080002;
         public static final int cp_smooth_video=0x7f080003;
         public static final int cp_video_depth=0x7f080001;
+        public static final int mContent=0x7f080009;
+        public static final int mDrawer=0x7f080008;
+        public static final int mSettings=0x7f08000a;
+        public static final int radio_x_pos_center=0x7f08000f;
+        public static final int radio_x_pos_left=0x7f08000e;
+        public static final int radio_x_pos_right=0x7f080010;
+        public static final int radio_y_pos_center=0x7f080012;
+        public static final int radio_y_pos_left=0x7f080011;
+        public static final int radio_y_pos_right=0x7f080013;
+        public static final int sB_opacity=0x7f08000d;
+        public static final int sB_pos=0x7f08000b;
+        public static final int sB_size=0x7f08000c;
     }
     public static final class layout {
         public static final int cp_config=0x7f030000;
-        public static final int drawer_list_item=0x7f030001;
+        public static final int cp_main=0x7f030001;
+        public static final int cp_menu_item=0x7f030002;
+        public static final int cp_menu_sub_gamepad=0x7f030003;
+        public static final int cp_menu_sub_videopos=0x7f030004;
     }
     public static final class raw {
         public static final int cp=0x7f050000;
@@ -60,8 +78,17 @@ public final class R {
         public static final int change_dir=0x7f06000d;
         public static final int chinese_paladin_logo=0x7f06000e;
         public static final int choose_dir=0x7f06000f;
-        public static final int close_appli=0x7f060010;
+        public static final int close_app=0x7f060010;
         public static final int coming_soon=0x7f060011;
+        public static final int cp_menu_sub_gamepad_opacity_full=0x7f060053;
+        public static final int cp_menu_sub_gamepad_opacity_half=0x7f060054;
+        public static final int cp_menu_sub_gamepad_opacity_none=0x7f060055;
+        public static final int cp_menu_sub_gamepad_pos_bottom=0x7f060052;
+        public static final int cp_menu_sub_gamepad_pos_center=0x7f060051;
+        public static final int cp_menu_sub_gamepad_pos_top=0x7f060050;
+        public static final int cp_menu_sub_gamepad_size_large=0x7f06004f;
+        public static final int cp_menu_sub_gamepad_size_medium=0x7f06004e;
+        public static final int cp_menu_sub_gamepad_size_small=0x7f06004d;
         public static final int current=0x7f060012;
         public static final int current_dir=0x7f060013;
         public static final int disable=0x7f060014;
@@ -115,11 +142,12 @@ public final class R {
         public static final int unknown=0x7f060044;
         public static final int unziping=0x7f060045;
         public static final int video_depth=0x7f060046;
-        public static final int video_x_margin=0x7f060047;
-        public static final int video_x_pos=0x7f060048;
-        public static final int video_y_margin=0x7f060049;
-        public static final int video_y_pos=0x7f06004a;
-        public static final int yes=0x7f06004b;
+        public static final int video_pos=0x7f060047;
+        public static final int video_x_margin=0x7f060048;
+        public static final int video_x_pos=0x7f060049;
+        public static final int video_y_margin=0x7f06004a;
+        public static final int video_y_pos=0x7f06004b;
+        public static final int yes=0x7f06004c;
     }
     public static final class xml {
         public static final int menu=0x7f040000;

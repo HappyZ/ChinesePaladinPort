@@ -43,17 +43,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Gravity;
-import android.view.ViewGroup.LayoutParams;
+import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Toast;
 import android.media.AudioManager;
 
@@ -61,8 +63,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	
 	public static MainActivity instance = null;
 	public static DrawerLayout mDrawer = null;
-	public static FrameLayout mFrame = null;
 	public static ListView mSettings = null;
+	public static FrameLayout mContent = null;
 	public static MainView mView = null;
 	
 	private Button videoDepth;
@@ -163,7 +165,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	}
 
 	/**
-	 * Run the app
+	 * Start the game
 	 * @author HappyZ
 	 */
 	public void runApp() {
@@ -171,23 +173,121 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		if (!checkGameFiles())
 			unZipFile();
 		if (mView == null) {
-			settingTitles = getResources().getStringArray(R.array.settings);
-			mDrawer = new DrawerLayout(this);
-			mFrame = new FrameLayout(this);
-			mSettings = new ListView(this);
+			setContentView(R.layout.cp_main);
+			mDrawer = (DrawerLayout) findViewById(R.id.mDrawer);
+			mContent = (FrameLayout) findViewById(R.id.mContent);
 			mView = new MainView(this);
-			// MainView Added to Frame
-			mFrame.addView(mView);
-			// Frame Added to Drawer
-			mDrawer.addView(mFrame, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-			// Settings Added to Drawer
-			DrawerLayout.LayoutParams mSettingsLP = new DrawerLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-			mSettingsLP.gravity = Gravity.START;
-			mSettings.setLayoutParams(mSettingsLP);
-			mSettings.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, settingTitles));
-			mDrawer.addView(mSettings);
-			// Initialize DrawerLayout view
-			setContentView(mDrawer);
+			mContent.addView(mView);
+			settingTitles = getResources().getStringArray(R.array.settings);
+			mSettings = (ListView) findViewById(R.id.mSettings);
+			mSettings.setAdapter(new ArrayAdapter<String>(this, R.layout.cp_menu_item, settingTitles));
+			mSettings.setOnItemClickListener(new ListView.OnItemClickListener(){
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+//					String itemName = (String) mSettings.getItemAtPosition(position);
+					AlertDialog.Builder d = new AlertDialog.Builder(instance);
+					LayoutInflater inflater = null;
+					switch (position){
+						case 0: // Touch Mode
+							Toast.makeText(instance, "So far GamePad only", Toast.LENGTH_SHORT).show();
+//							String[] touchMode = {
+//									getResources().getString(R.string.touch_mode_invalid),
+//									getResources().getString(R.string.touch_mode_gamepad) };
+//							d.setTitle(getResources().getString(R.string.touch_mode))
+//								.setNegativeButton(getResources().getString(R.string.cancel), null)
+//								.setItems(touchMode, new DialogInterface.OnClickListener() {
+//									@Override
+//									public void onClick(DialogInterface dialog, int which) {
+//										if (mView.mTouchMode != null) mView.mTouchMode.cleanup();
+//										switch (which){
+//											case 0: Locals.TouchMode = "Invalid"; break;
+//											case 1: Locals.TouchMode = "GamePad"; break;
+//											case 2: Locals.TouchMode = "Touch"; break;
+//											case 3: Locals.TouchMode = "TrackPad"; break;
+//											default: Locals.TouchMode = "Invalid"; break;
+//										}
+//										Settings.SaveLocals(instance);
+//										mView.mTouchMode = TouchMode.getTouchMode(Locals.TouchMode, mView);
+//										mView.mTouchMode.setup();
+//										mView.mTouchMode.update();
+//										mView.mTouchInput.setOnInputEventListener(mView.mTouchMode);
+//									}
+//								}).setCancelable(true);
+							break;
+						case 1: // GamePad
+							inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+							View menu_sub_gamepad = inflater.inflate(R.layout.cp_menu_sub_gamepad, null);
+							final SeekBar pos = (SeekBar) menu_sub_gamepad.findViewById(R.id.sB_pos);
+							pos.setProgress(Globals.GamePadPosition);
+							final SeekBar size = (SeekBar) menu_sub_gamepad.findViewById(R.id.sB_size);
+							size.setProgress(Globals.GamePadSize);
+							final SeekBar opacity = (SeekBar) menu_sub_gamepad.findViewById(R.id.sB_opacity);
+							opacity.setProgress(Globals.GamePadOpacity);
+							d.setView(menu_sub_gamepad)
+								.setTitle(getResources().getString(R.string.touch_mode_gamepad))
+								.setNegativeButton(getResources().getString(R.string.cancel), null)
+								.setPositiveButton(getResources().getString(R.string.ok), 
+										new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										Globals.GamePadPosition = pos.getProgress();
+										Globals.GamePadSize = size.getProgress();
+										Globals.GamePadOpacity = opacity.getProgress();
+										Settings.SaveGlobals(instance);
+										mView.update();
+									}
+								}).setCancelable(true);
+							break;
+						case 2: // Video Position
+							inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+							View menu_sub_videopos = inflater.inflate(R.layout.cp_menu_sub_videopos, null);
+							RadioButton x_pos_left = (RadioButton) menu_sub_videopos.findViewById(R.id.radio_x_pos_left);
+							RadioButton x_pos_center = (RadioButton) menu_sub_videopos.findViewById(R.id.radio_x_pos_center);
+							RadioButton x_pos_right = (RadioButton) menu_sub_videopos.findViewById(R.id.radio_x_pos_right);
+							switch (Locals.VideoXPosition){
+								case -1: x_pos_left.setChecked(true); break;
+								case 0: x_pos_center.setChecked(true); break;
+								case 1: x_pos_right.setChecked(true); break;
+								default: x_pos_center.setChecked(true); break;
+							}
+							RadioButton y_pos_left = (RadioButton) menu_sub_videopos.findViewById(R.id.radio_y_pos_left);
+							RadioButton y_pos_center = (RadioButton) menu_sub_videopos.findViewById(R.id.radio_y_pos_center);
+							RadioButton y_pos_right = (RadioButton) menu_sub_videopos.findViewById(R.id.radio_y_pos_right);
+							switch (Locals.VideoYPosition){
+								case -1: y_pos_left.setChecked(true); break;
+								case 0: y_pos_center.setChecked(true); break;
+								case 1: y_pos_right.setChecked(true); break;
+								default: y_pos_center.setChecked(true); break;
+							}
+							x_pos_left.setOnClickListener(instance);
+							x_pos_center.setOnClickListener(instance);
+							x_pos_right.setOnClickListener(instance);
+							y_pos_left.setOnClickListener(instance);
+							y_pos_center.setOnClickListener(instance);
+							y_pos_right.setOnClickListener(instance);
+							d.setView(menu_sub_videopos)
+								.setTitle(getResources().getString(R.string.video_pos))
+								.setPositiveButton(getResources().getString(R.string.ok), null)
+								.setCancelable(true);
+							break;
+//						case 2: // LaunchConfig
+//							break;
+						default: // quit
+							d.setTitle(getResources().getString(R.string.close_app))
+								.setNegativeButton(getResources().getString(R.string.cancel), null)
+								.setPositiveButton(getResources().getString(R.string.yes), 
+									new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										mView.exitApp();
+									}
+								}).setCancelable(true);
+					}
+					d.create().show();
+				}
+				
+			});
 		}
 		mView.setFocusableInTouchMode(true);
 		mView.setFocusable(true);
@@ -244,6 +344,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 */
 	public void onClick(View arg) {
 		switch (arg.getId()) {
+		case R.id.radio_x_pos_left:
+			Locals.VideoXPosition = -1;
+			Settings.SaveLocals(this);
+			mView.update();
+			break;
+		case R.id.radio_x_pos_center:
+			Locals.VideoXPosition = 0;
+			Settings.SaveLocals(this);
+			mView.update();
+			break;
+		case R.id.radio_x_pos_right:
+			Locals.VideoXPosition = 1;
+			Settings.SaveLocals(this);
+			mView.update();
+			break;
+		case R.id.radio_y_pos_left:
+			Locals.VideoYPosition = -1;
+			Settings.SaveLocals(this);
+			mView.update();
+			break;
+		case R.id.radio_y_pos_center:
+			Locals.VideoYPosition = 0;
+			Settings.SaveLocals(this);
+			mView.update();
+			break;
+		case R.id.radio_y_pos_right:
+			Locals.VideoYPosition = 1;
+			Settings.SaveLocals(this);
+			mView.update();
+			break;
 		case R.id.cp_video_depth:
 			if(Globals.VIDEO_DEPTH_BPP_ITEMS.length >= 2){
 				String[] bppItems = new String[Globals.VIDEO_DEPTH_BPP_ITEMS.length];

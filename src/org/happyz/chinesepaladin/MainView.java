@@ -1,5 +1,6 @@
 /*
  * 2012/7 Created by AKIZUKI Katane
+ * 2014/4 Modified by HappyZ
  */
 
 package org.happyz.chinesepaladin;
@@ -18,7 +19,6 @@ import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Iterator;
 
 import android.app.AlertDialog;
@@ -27,21 +27,21 @@ import android.view.InputDevice;
 
 public class MainView extends RelativeLayout {
 	public MainView(MainActivity context) {
-		super(context);
-
+	    super(context);
 		mActivity = context;
 		setBackgroundColor(Color.BLACK);
+		setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		setScreenOrientation(Locals.ScreenOrientation);
-
+		// audio
 		mAudioThread = new AudioThread(this);
-
+		// GL render
 		mGLView = new DemoGLSurfaceView(context);
-		this.addView(mGLView); 
-
+		this.addView(mGLView);
+		// cursor view
 		mMouseCursor = new MouseCursor(context);
 		this.addView(mMouseCursor);
 		showMouseCursor(Globals.MouseCursorShowed);
-
+		// compute GL view size
 		int vw = mDisplayWidth;
 		int vh = mDisplayHeight;
 		if (Locals.VideoXRatio > 0 && Locals.VideoYRatio > 0) {
@@ -51,21 +51,18 @@ public class MainView extends RelativeLayout {
 				vh = vw * Locals.VideoYRatio / Locals.VideoXRatio;
 			}
 		}
-
 		setGLViewRect(0, 0, vw, vh);
-
+		// gamepad setup
 		mTouchMode = TouchMode.getTouchMode(Locals.TouchMode, this);
 		mTouchMode.setup();
 		mTouchMode.update();
-
 		mTouchInput = DifferentTouchInput.getInstance();
 		mTouchInput.setOnInputEventListener(mTouchMode);
-
 		nativeInitInputJavaCallbacks();
 	}
 	
 	public MainView(Context context) {
-	    super(context);
+		super(context);
 	}
 	
 	protected void onPause() {
@@ -75,8 +72,8 @@ public class MainView extends RelativeLayout {
 
 	protected void onResume() {
 		mGLView.onResume();
-		DimSystemStatusBar.get().dim(this);
-		DimSystemStatusBar.get().dim(mGLView);
+//		DimSystemStatusBar.get().dim(this);
+//		DimSystemStatusBar.get().dim(mGLView);
 		_isPaused = false;
 	}
 
@@ -224,11 +221,11 @@ public class MainView extends RelativeLayout {
 			break;
 		}
 
-		if (keyCode == KeyEvent.KEYCODE_MENU
-				|| keyCode == KeyEvent.KEYCODE_BACK) {
-			DimSystemStatusBar.get().dim(this);
-			DimSystemStatusBar.get().dim(mGLView);
-		}
+//		if (keyCode == KeyEvent.KEYCODE_MENU
+//				|| keyCode == KeyEvent.KEYCODE_BACK) {
+//			DimSystemStatusBar.get().dim(this);
+//			DimSystemStatusBar.get().dim(mGLView);
+//		}
 
 		return true;
 	}
@@ -348,30 +345,6 @@ public class MainView extends RelativeLayout {
 			}
 		}
 		// }
-
-		SubMenu menu_touchmode = menu.addSubMenu(getResources().getString(
-				R.string.touch_mode));
-		menu_touchmode.add(Menu.NONE, MENU_ITEM_ID_TOUCHMODE_INVALID,
-				Menu.NONE, getResources()
-						.getString(R.string.touch_mode_invalid));
-		if (Globals.MOUSE_USE) {
-			menu_touchmode.add(Menu.NONE, MENU_ITEM_ID_TOUCHMODE_TOUCH,
-					Menu.NONE,
-					getResources().getString(R.string.touch_mode_touch));
-			menu_touchmode.add(Menu.NONE, MENU_ITEM_ID_TOUCHMODE_TRACKPAD,
-					Menu.NONE,
-					getResources().getString(R.string.touch_mode_trackpad));
-		}
-		menu_touchmode.add(Menu.NONE, MENU_ITEM_ID_TOUCHMODE_GAMEPAD,
-				Menu.NONE, getResources()
-						.getString(R.string.touch_mode_gamepad));
-
-		menu.add(Menu.NONE, (MENU_ITEM_ID_QUIT), Menu.NONE, getResources()
-				.getString(R.string.quit));
-
-		//
-
-		// menu.add(Menu.NONE, (MENU_ITEM_ID_ABOUT), Menu.NONE, "About");
 
 		menu.add(Menu.NONE, MENU_ITEM_ID_SETTING_KEYCONFIG, Menu.NONE,
 				getResources().getString(R.string.key_config));
@@ -563,46 +536,6 @@ public class MainView extends RelativeLayout {
 			int key = Globals.SUBMENU_KEY_ARRAY[index];
 			nativeKey(key, 1);
 			nativeKey(key, 0);
-		} else if (d == MENU_ITEM_ID_TOUCHMODE_INVALID) {
-			if (mTouchMode != null) {
-				mTouchMode.cleanup();
-			}
-			Locals.TouchMode = "Invalid";
-			Settings.SaveLocals(mActivity);
-			mTouchMode = TouchMode.getTouchMode(Locals.TouchMode, this);
-			mTouchMode.setup();
-			mTouchMode.update();
-			mTouchInput.setOnInputEventListener(mTouchMode);
-		} else if (d == MENU_ITEM_ID_TOUCHMODE_TOUCH) {
-			if (mTouchMode != null) {
-				mTouchMode.cleanup();
-			}
-			Locals.TouchMode = "Touch";
-			Settings.SaveLocals(mActivity);
-			mTouchMode = TouchMode.getTouchMode(Locals.TouchMode, this);
-			mTouchMode.setup();
-			mTouchMode.update();
-			mTouchInput.setOnInputEventListener(mTouchMode);
-		} else if (d == MENU_ITEM_ID_TOUCHMODE_TRACKPAD) {
-			if (mTouchMode != null) {
-				mTouchMode.cleanup();
-			}
-			Locals.TouchMode = "TrackPad";
-			Settings.SaveLocals(mActivity);
-			mTouchMode = TouchMode.getTouchMode(Locals.TouchMode, this);
-			mTouchMode.setup();
-			mTouchMode.update();
-			mTouchInput.setOnInputEventListener(mTouchMode);
-		} else if (d == MENU_ITEM_ID_TOUCHMODE_GAMEPAD) {
-			if (mTouchMode != null) {
-				mTouchMode.cleanup();
-			}
-			Locals.TouchMode = "GamePad";
-			Settings.SaveLocals(mActivity);
-			mTouchMode = TouchMode.getTouchMode(Locals.TouchMode, this);
-			mTouchMode.setup();
-			mTouchMode.update();
-			mTouchInput.setOnInputEventListener(mTouchMode);
 		} else if (d == MENU_ITEM_ID_SETTING_KEYCONFIG) {
 			enterKeyConfigMode();
 		} else if (d == MENU_ITEM_ID_SETTING_MOUSECURSOR_SHOW) {
@@ -613,30 +546,6 @@ public class MainView extends RelativeLayout {
 			Globals.MouseCursorShowed = false;
 			Settings.SaveGlobals(mActivity);
 			showMouseCursor(Globals.MouseCursorShowed);
-		} else if (d == MENU_ITEM_ID_SETTING_VIDEO_XPOSITION_LEFT) {
-			Locals.VideoXPosition = -1;
-			Settings.SaveLocals(mActivity);
-			update();
-		} else if (d == MENU_ITEM_ID_SETTING_VIDEO_XPOSITION_CENTER) {
-			Locals.VideoXPosition = 0;
-			Settings.SaveLocals(mActivity);
-			update();
-		} else if (d == MENU_ITEM_ID_SETTING_VIDEO_XPOSITION_RIGHT) {
-			Locals.VideoXPosition = 1;
-			Settings.SaveLocals(mActivity);
-			update();
-		} else if (d == MENU_ITEM_ID_SETTING_VIDEO_YPOSITION_TOP) {
-			Locals.VideoYPosition = -1;
-			Settings.SaveLocals(mActivity);
-			update();
-		} else if (d == MENU_ITEM_ID_SETTING_VIDEO_YPOSITION_CENTER) {
-			Locals.VideoYPosition = 0;
-			Settings.SaveLocals(mActivity);
-			update();
-		} else if (d == MENU_ITEM_ID_SETTING_VIDEO_YPOSITION_BOTTOM) {
-			Locals.VideoYPosition = 1;
-			Settings.SaveLocals(mActivity);
-			update();
 		} else if (d >= MENU_ITEM_ID_SETTING_VIDEO_XMARGIN_FIRST
 				&& d <= MENU_ITEM_ID_SETTING_VIDEO_XMARGIN_LAST) {
 			Locals.VideoXMargin = d - MENU_ITEM_ID_SETTING_VIDEO_XMARGIN_FIRST;
@@ -703,21 +612,6 @@ public class MainView extends RelativeLayout {
 					- MENU_ITEM_ID_SETTING_BUTTON_BOTTOM_NUM_FIRST;
 			Settings.SaveGlobals(mActivity);
 			update();
-		} else if (d >= MENU_ITEM_ID_SETTING_GAMEPAD_POSITION_FIRST
-				&& d <= MENU_ITEM_ID_SETTING_GAMEPAD_POSITION_LAST) {
-			Globals.GamePadPosition = (d - MENU_ITEM_ID_SETTING_GAMEPAD_POSITION_FIRST) * 10;
-			Settings.SaveGlobals(mActivity);
-			update();
-		} else if (d >= MENU_ITEM_ID_SETTING_GAMEPAD_SIZE_FIRST
-				&& d <= MENU_ITEM_ID_SETTING_GAMEPAD_SIZE_LAST) {
-			Globals.GamePadSize = (d - MENU_ITEM_ID_SETTING_GAMEPAD_SIZE_FIRST) * 10;
-			Settings.SaveGlobals(mActivity);
-			update();
-		} else if (d >= MENU_ITEM_ID_SETTING_GAMEPAD_OPACITY_FIRST
-				&& d <= MENU_ITEM_ID_SETTING_GAMEPAD_OPACITY_LAST) {
-			Globals.GamePadOpacity = (d - MENU_ITEM_ID_SETTING_GAMEPAD_OPACITY_FIRST) * 10;
-			Settings.SaveGlobals(mActivity);
-			update();
 		} else if (d == MENU_ITEM_ID_SETTING_GAMEPAD_ARROW_BUTTON_AS_AXIS) {
 			Globals.GamePadArrowButtonAsAxis = true;
 			Settings.SaveGlobals(mActivity);
@@ -734,24 +628,6 @@ public class MainView extends RelativeLayout {
 			Settings.SaveLocals(mActivity);
 		} else if (d == MENU_ITEM_ID_ABOUT) {
 			//
-		} else if (d == MENU_ITEM_ID_QUIT) {
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-					getActivity());
-			alertDialogBuilder.setTitle(getResources().getString(
-					R.string.close_appli));
-			alertDialogBuilder.setPositiveButton(
-					getResources().getString(R.string.yes),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							exitApp();
-						}
-					});
-			alertDialogBuilder.setNegativeButton(
-					getResources().getString(R.string.no), null);
-			alertDialogBuilder.setCancelable(true);
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
 		}
 		return true;
 	}
@@ -821,8 +697,6 @@ public class MainView extends RelativeLayout {
 		mTouchMode.update();
 	}
 
-	//
-
 	public int getGLViewX() {
 		return mGLViewX;
 	}
@@ -845,27 +719,20 @@ public class MainView extends RelativeLayout {
 
 	public void setGLViewRect(int x, int y, int w, int h) {
 		if (mGLView != null) {
-			if (w < 0) {
-				w = mGLViewWidth;
-			}
-			if (h < 0) {
-				h = mGLViewHeight;
-			}
-
+			if (w < 0) w = mGLViewWidth;
+			if (h < 0) h = mGLViewHeight;
 			if (mGLViewWidth > 0 && mGLViewHeight > 0) {
 				mMousePointX = mMousePointX * w / mGLViewWidth;
 				mMousePointY = mMousePointY * h / mGLViewHeight;
 			}
-
 			mGLViewX = x;
 			mGLViewY = y;
 			mGLViewWidth = w;
 			mGLViewHeight = h;
 			LayoutParams params = new LayoutParams(mGLViewWidth, mGLViewHeight);
-			params.setMargins(mGLViewX,mGLViewY,0,0);
+			params.setMargins(mGLViewX+1, mGLViewY+1, 0, 0); // fix for menu
 			mGLView.setLayoutParams(params);
 			updateMouseCursor();
-
 			// Log.i("MainView", "mGLView : x,y,w,h=" + mGLViewX + "," +
 			// mGLViewY + "," + mGLViewWidth + "," + mGLViewHeight);
 		}
@@ -1014,21 +881,19 @@ public class MainView extends RelativeLayout {
 		Settings.SaveGlobals(mActivity);
 	}
 
-	//
-	private boolean _isPaused = false;
+	protected boolean _isPaused = false; // pause judge 
+	protected AudioThread mAudioThread = null;
+	protected DemoGLSurfaceView mGLView = null;
+	// GL
+	protected int mGLViewX = 0;
+	protected int mGLViewY = 0;
+	protected int mGLViewWidth = 0;
+	protected int mGLViewHeight = 0;
 
-	private AudioThread mAudioThread = null;
-	private DemoGLSurfaceView mGLView = null;
-
-	private int mGLViewX = 0;
-	private int mGLViewY = 0;
-	private int mGLViewWidth = 0;
-	private int mGLViewHeight = 0;
-
-	private MainActivity mActivity = null;
-	private DifferentTouchInput mTouchInput = null;
-	private TouchMode mTouchMode = null;
-
+	protected MainActivity mActivity = null;
+	protected DifferentTouchInput mTouchInput = null;
+	protected TouchMode mTouchMode = null;
+	// cursor
 	private MouseCursor mMouseCursor = null;
 	private int mMousePointX = 0;
 	private int mMousePointY = 0;
@@ -1041,41 +906,41 @@ public class MainView extends RelativeLayout {
 
 	public native void nativeInitInputJavaCallbacks();
 }
-
-// *** HONEYCOMB / ICS FIX FOR FULLSCREEN MODE, by lmak ***
-abstract class DimSystemStatusBar {
-	public static DimSystemStatusBar get() {
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
-			return DimSystemStatusBarHoneycomb.Holder.sInstance;
-		else
-			return DimSystemStatusBarDummy.Holder.sInstance;
-	}
-
-	public abstract void dim(final View view);
-
-	private static class DimSystemStatusBarHoneycomb extends DimSystemStatusBar {
-		private static class Holder {
-			private static final DimSystemStatusBarHoneycomb sInstance = new DimSystemStatusBarHoneycomb();
-		}
-
-		public void dim(final View view) {
-			/*
-			 * if (android.os.Build.VERSION.SDK_INT >=
-			 * android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // ICS has
-			 * the same constant redefined with a different name.
-			 * hiddenStatusCode = android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE;
-			 * }
-			 */
-			//view.setSystemUiVisibility(android.view.View.STATUS_BAR_HIDDEN);
-		}
-	}
-
-	private static class DimSystemStatusBarDummy extends DimSystemStatusBar {
-		private static class Holder {
-			private static final DimSystemStatusBarDummy sInstance = new DimSystemStatusBarDummy();
-		}
-
-		public void dim(final View view) {
-		}
-	}
-}
+//
+//// *** HONEYCOMB / ICS FIX FOR FULLSCREEN MODE, by lmak ***
+//abstract class DimSystemStatusBar {
+//	public static DimSystemStatusBar get() {
+//		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+//			return DimSystemStatusBarHoneycomb.Holder.sInstance;
+//		else
+//			return DimSystemStatusBarDummy.Holder.sInstance;
+//	}
+//
+//	public abstract void dim(final View view);
+//
+//	private static class DimSystemStatusBarHoneycomb extends DimSystemStatusBar {
+//		private static class Holder {
+//			private static final DimSystemStatusBarHoneycomb sInstance = new DimSystemStatusBarHoneycomb();
+//		}
+//
+//		public void dim(final View view) {
+//			/*
+//			 * if (android.os.Build.VERSION.SDK_INT >=
+//			 * android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // ICS has
+//			 * the same constant redefined with a different name.
+//			 * hiddenStatusCode = android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE;
+//			 * }
+//			 */
+//			//view.setSystemUiVisibility(android.view.View.STATUS_BAR_HIDDEN);
+//		}
+//	}
+//
+//	private static class DimSystemStatusBarDummy extends DimSystemStatusBar {
+//		private static class Holder {
+//			private static final DimSystemStatusBarDummy sInstance = new DimSystemStatusBarDummy();
+//		}
+//
+//		public void dim(final View view) {
+//		}
+//	}
+//}
