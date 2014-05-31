@@ -28,8 +28,10 @@ extern "C"
 {
 #endif
 
-#include "native_midi/native_midi.h"
-
+#ifdef TIMIDITY
+	#include "native_midi/native_midi.h"
+#endif
+	
 VOID
 MIDI_Play(
    INT       iNumRIX,

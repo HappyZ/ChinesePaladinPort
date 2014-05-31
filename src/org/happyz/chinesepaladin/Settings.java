@@ -55,7 +55,7 @@ class Settings {
 	 * Globally setup the directory
 	 * @author HappyZ
 	 */
-	public static void setupCurrentDirectory() {
+	protected static void setupCurrentDirectory() {
 		// reinitialize the directory path
 		Globals.CurrentDirectoryPath = null;
 		String curDirPath = Environment.getExternalStorageDirectory().getPath() + Globals.CURRENT_DIRECTORY_PATH_TEMPLATE;

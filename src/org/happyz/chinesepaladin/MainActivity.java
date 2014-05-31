@@ -121,25 +121,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		if (curDirPath == null || curDirPath.equals("")){
 			// create directory if not exist
 			File dir = new File(path);
-			dir.mkdirs();
-			Settings.setupCurrentDirectory(); // setup again
-		}
-		curDirPath = Globals.CurrentDirectoryPath;
-		if(curDirPath != null && !curDirPath.equals("")){
-			if (!checkGameFiles()) unZipFile();
-			Toast.makeText(instance, "Game files have been validated", Toast.LENGTH_SHORT).show();
-		} else { // exit app since failed to create a directory
-			AlertDialog.Builder d = new AlertDialog.Builder(this);
-			d.setTitle(getResources().getString(R.string.error));
-			d.setMessage(getResources().getString(R.string.error_create_dir) + path);
-			d.setNegativeButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					finish();
-				}
-			});
-			d.setCancelable(false);
-			d.create().show();
+			if (dir.mkdirs()){
+				Settings.setupCurrentDirectory(); // setup again
+				if (!checkGameFiles()) unZipFile(); // exit app since failed to unzip files
+				Toast.makeText(instance, "Game files have been validated", Toast.LENGTH_SHORT).show();
+			}else{ // exit app since failed to create a directory
+				AlertDialog.Builder d = new AlertDialog.Builder(this);
+				d.setTitle(getResources().getString(R.string.error));
+				d.setMessage(getResources().getString(R.string.error_create_dir) + path);
+				d.setNegativeButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+				d.setCancelable(false);
+				d.create().show();
+			};
 		}
 	}
 

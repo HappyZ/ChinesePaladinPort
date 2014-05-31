@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.happyz.chinesepaladin"
     android:installLocation="preferExternal"
-    android:versionCode="20140328"
-    android:versionName="1.0.0" >
+    android:versionCode="20140531"
+    android:versionName="1.0.2" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET"/>
