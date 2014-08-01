@@ -9,6 +9,7 @@ package org.happyz.chinesepaladin;
 
 public final class R {
     public static final class array {
+        public static final int cheatingItems=0x7f070001;
         /**  <item>Key Config</item> 
  <item>Mouse Cursor</item> 
          */

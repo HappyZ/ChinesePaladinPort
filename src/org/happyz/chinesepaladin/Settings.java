@@ -202,6 +202,8 @@ class Settings {
 								Locals.AppModuleName = val;
 							} else if(key.equals("AppCommandOptions")){
 								Locals.AppCommandOptions = val;
+							} else if(key.equals("Language")){
+								Locals.Language = val;
 							} else if(key.equals("TouchMode")){
 								Locals.TouchMode = val;
 							} else if(key.equals("AppLaunchConfigUse")){
@@ -291,6 +293,8 @@ class Settings {
 			bw.write("VideoDepthBpp=" + Locals.VideoDepthBpp);
 			bw.newLine();
 			bw.write("VideoSmooth=" + Locals.VideoSmooth);
+			bw.newLine();
+			bw.write("Language=" + Locals.Language);
 			bw.newLine();
 			bw.write("TouchMode=" + Locals.TouchMode);
 			bw.newLine();

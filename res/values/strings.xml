@@ -83,10 +83,20 @@
         <item>Touch Mode</item>
         <item>GamePad Settings</item>
         <item>Video Position</item>
+        <item>Language (Restart)</item>
+        <item>Cheats</item>
         <!-- <item>App Launch Config</item> -->
         <item>Quit</item>
         <!-- <item>Key Config</item> -->
         <!-- <item>Mouse Cursor</item> -->
+    </string-array>
+    
+    <string-array name="cheatingItems">
+        <item>Money</item>
+        <item>Xiaoyao Lee</item>
+        <item>Linger Zhao</item>
+        <item>Yueru Lin</item>
+        <item>Anu</item>
     </string-array>
 
     <string name="cp_menu_sub_gamepad_size_small">Tiny</string>

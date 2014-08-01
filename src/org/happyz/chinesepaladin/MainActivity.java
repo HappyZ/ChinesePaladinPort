@@ -22,7 +22,7 @@ freely, subject to the following restrictions:
 /*
  * 2012/7 Modified by AKIZUKI Katane
  * 2013/9 Modified by Martin Dieter
- * 2014/3 Modified by HappyZ
+ * 2014/8 Modified by HappyZ
  */
 
 
@@ -31,11 +31,13 @@ package org.happyz.chinesepaladin;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.app.Activity;
@@ -74,6 +76,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	private Button gallery;
 	private Button about;
 	private Button run;
+	
+	private File cheatSavedGame;
 	
 	private String[] settingTitles;
 	
@@ -160,6 +164,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			if (!flag) return false;
 		}
 		return true;
+	}
+	
+	private String[] findSavedGameFiles() {
+		File dir = new File(Globals.CurrentDirectoryPath);
+		File[] files = dir.listFiles();
+		ArrayList<String> lst = new ArrayList<String>();
+		if(files!=null && files.length > 0){
+			for (int i = 0; i<files.length; i++){
+				String tmp = files[i].getName();
+				if (tmp.substring(tmp.length()-3).toLowerCase(Locale.ENGLISH).equals("rpg")){
+					lst.add(tmp);
+				}
+			}
+		}
+		String[] results = new String[lst.size()];
+		for (int i = 0; i < lst.size(); i++) results[i] = lst.get(i);
+		return results;
 	}
 
 	/**
@@ -269,6 +290,67 @@ public class MainActivity extends Activity implements View.OnClickListener {
 								.setPositiveButton(getResources().getString(R.string.ok), null)
 								.setCancelable(true);
 							break;
+						case 3: // language selection
+							final String[] langs = {"Simplified Chinese", "Traditional Chinese", "English (Beta)"};
+							d.setItems(langs, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									if (Locals.Language != langs[which]){
+										File targetLang = null;
+										File oldLang = new File(Globals.CurrentDirectoryPath + "/WOR16.FON");
+										FileInputStream in = null;
+										FileOutputStream out = null;
+										switch(which){
+											case 0:
+												targetLang = new File(Globals.CurrentDirectoryPath + "/JIANTI.FON");
+												break;
+											case 1:
+												targetLang = new File(Globals.CurrentDirectoryPath + "/FANTI.FON");
+												break;
+											case 2:
+											default:
+												Toast.makeText(instance, "Unimplemented Yet", Toast.LENGTH_SHORT).show();
+										}
+										if (targetLang != null && targetLang.exists()){
+											try{
+												in = new FileInputStream(targetLang);
+												byte[] content = new byte[(int)targetLang.length()];
+												if ( in.read(content) != -1){
+													in.close();
+													out = new FileOutputStream(oldLang);
+													out.write(content);
+													out.close();
+													Toast.makeText(instance, "Changed to "+langs[which]+". Please Restart the Game.", Toast.LENGTH_SHORT).show();
+												}else{
+													Toast.makeText(instance, "Wrong File", Toast.LENGTH_SHORT).show();
+												}
+											}catch(Exception e){System.out.println(e);}
+											Locals.Language = langs[which];
+											Settings.SaveLocals(instance);
+											mView.update();
+										}else Toast.makeText(instance, "No Such File", Toast.LENGTH_SHORT).show();
+									}
+								}
+							})
+								.setTitle("Manage Saved Game")
+								.setNegativeButton(getResources().getString(R.string.cancel), null)
+								.setCancelable(true);
+							break;
+						case 4: // Select Cheating File
+							gameCheat();
+//							final String[] items = findSavedGameFiles();
+//							d.setItems(items, new DialogInterface.OnClickListener() {
+//								@Override
+//								public void onClick(DialogInterface dialog, int which) {
+//									Toast.makeText(instance, "Selected "+items[which], Toast.LENGTH_SHORT).show();
+//									File file = new File(Globals.CurrentDirectoryPath + "/" + items[which]);
+//									gameCheat(file);
+//								}
+//							})
+//								.setTitle("Manage Saved Game")
+//								.setNegativeButton(getResources().getString(R.string.cancel), null)
+//								.setCancelable(true);
+							break;
 //						case 2: // LaunchConfig
 //							break;
 						default: // quit
@@ -282,7 +364,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 									}
 								}).setCancelable(true);
 					}
-					d.create().show();
+					if (position != 4) d.create().show();
 				}
 				
 			});
@@ -291,6 +373,88 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		mView.setFocusable(true);
 		mView.requestFocus();
 		System.gc();
+	}
+	
+	/**
+	 * Game Cheating
+	 * @author HappyZ
+	 */
+	private void gameCheat(){
+		int money = nativeReadMoney();
+		if (money < 500){
+			Toast.makeText(instance, "You only have "+money+". We need 500 coins.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		if (nativeCheat(0, 0) == true) // xiaoyao, life
+			Toast.makeText(instance, "Xiaoyao's Life is Max Now", Toast.LENGTH_SHORT).show();
+		else
+			Toast.makeText(instance, "Failed to do so.", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void gameCheat(File file){
+		cheatSavedGame = file;
+		AlertDialog.Builder d = new AlertDialog.Builder(instance);
+		final String[] cheatingItems = getResources().getStringArray(R.array.cheatingItems);
+		d.setItems(cheatingItems, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				gameCheat(cheatSavedGame, which);
+			}
+		})
+			.setTitle("Cheating on ... ?")
+			.setNegativeButton(getResources().getString(R.string.cancel), null)
+			.setCancelable(true);
+		d.create().show();
+	}
+	
+	private void gameCheat(File file, int which){
+		FileInputStream in = null;
+		FileOutputStream out = null;
+		try{
+			in = new FileInputStream(file);
+			byte[] content = new byte[(int)file.length()];
+			if ( in.read(content) != -1){
+				in.close();
+				switch(which){
+				case 0: // Money
+					content[0x028] = (byte) 0x3F;
+					content[0x029] = (byte) 0x42;
+					content[0x02A] = (byte) 0x0F;
+					Toast.makeText(instance, "Max Money Successfully", Toast.LENGTH_SHORT).show();
+					break;
+				case 1: // Xiaoyao Lee
+					content[0x250] = (byte) 0xE7;
+					content[0x251] = (byte) 0x03; // max life
+					content[0x268] = (byte) 0xE7;
+					content[0x269] = (byte) 0x03; // life
+					content[0x25C] = (byte) 0xE7;
+					content[0x25D] = (byte) 0x03; // max magic power
+					content[0x274] = (byte) 0xE7;
+					content[0x275] = (byte) 0x03; // magic power
+					content[0x2C8] = (byte) 0xE7;
+					content[0x2C9] = (byte) 0x03; // martial art
+					content[0x2D4] = (byte) 0xE7;
+					content[0x2D5] = (byte) 0x03; // ling li
+					content[0x2E0] = (byte) 0xE7;
+					content[0x2E1] = (byte) 0x03; // defense
+					content[0x2EC] = (byte) 0xE7;
+					content[0x2ED] = (byte) 0x03; // agility
+					content[0x2F8] = (byte) 0xE7;
+					content[0x2F9] = (byte) 0x03; // luck
+					Toast.makeText(instance, "Max Xiaoyao Successfully", Toast.LENGTH_SHORT).show();
+				case 2: // Liner Zhao
+				case 3: // Yueru Lin
+				case 4: // Anu
+				default:
+					Toast.makeText(instance, "Unimplemented", Toast.LENGTH_SHORT).show();
+				}
+				out = new FileOutputStream(file);
+				out.write(content);
+				out.close();
+			}else{
+				Toast.makeText(instance, "Wrong File", Toast.LENGTH_SHORT).show();
+			}
+		}catch (Exception e){System.out.println(e);}		
 	}
 
 	/**
@@ -574,5 +738,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		super.onDestroy();
 		System.exit(0);
 	}
+	
+	public static native int nativeReadMoney();
+	public static native boolean nativeCheat(int who, int what);
 }
 

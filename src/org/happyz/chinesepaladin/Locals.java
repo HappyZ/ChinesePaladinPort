@@ -38,6 +38,9 @@ class Locals {
 	public static int VideoDepthBpp = 32;  //16 or 32
 	public static boolean VideoSmooth = true;
 	
+	// Lanauge Setting
+	public static String Language = "Simplified Chinese";
+	
 	//Touch Mode Setting
 	
 	public static String TouchMode = "GamePad";

@@ -20,6 +20,7 @@ freely, subject to the following restrictions:
 */
 /*
 2012/7 Modified by AKIZUKI Katane
+2014/5 Modified by HappyZ
 */
 
 package org.happyz.chinesepaladin;
@@ -33,7 +34,7 @@ class Globals {
 	
 	static {
 		// Additional Library
-
+		System.loadLibrary("app_sdlpal");
 		// do not change
 		System.loadLibrary("sdl-1.2_jni");
 		System.loadLibrary("sdl_main_jni");
@@ -79,7 +80,10 @@ class Globals {
 		"voc.mkf",
 		"wor16.asc",
 		"wor16.fon",
-		"word.dat"
+		"word.dat",
+		"fanti.fon",
+		"jianti.fon",
+		"disc.dat"
 	};
 	
 	//Environment Setting
@@ -98,7 +102,7 @@ class Globals {
 	//public static String[] CurrentDirectoryPathArray = null;      //do not change
 	//public static String[] CurrentDirectoryValidPathArray = null; //do not change
 	
-	//Video Setting
+	// Video Setting
 	
 	public static final int[] VIDEO_DEPTH_BPP_ITEMS = {16, 32}; //do not change
 	
