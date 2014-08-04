@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.app.Activity;
@@ -58,6 +59,8 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.media.AudioManager;
 
@@ -76,6 +79,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	private Button gallery;
 	private Button about;
 	private Button run;
+	
+	private int wealth;
 	
 	private File cheatSavedGame;
 	
@@ -336,8 +341,68 @@ public class MainActivity extends Activity implements View.OnClickListener {
 								.setNegativeButton(getResources().getString(R.string.cancel), null)
 								.setCancelable(true);
 							break;
-						case 4: // Select Cheating File
-							gameCheat();
+						case 4: // Cheating
+							inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+							View menu_sub_cheating = inflater.inflate(R.layout.cp_menu_sub_cheating, null);
+							final int old_hp_xy = nativeGetHP(0);
+							final int old_mp_xy = nativeGetMP(0);
+							wealth = nativeGetMoney() + old_hp_xy + old_mp_xy;
+							final TextView currentCoins = (TextView) menu_sub_cheating.findViewById(R.id.currentCoins);
+							currentCoins.setText(""+nativeGetMoney());
+							Button buyCoins = (Button) menu_sub_cheating.findViewById(R.id.buyCoins);
+							Button maxAll_xy = (Button) menu_sub_cheating.findViewById(R.id.cheat_xiaoyao_maxAll);
+							// xiaoyao
+							final SeekBar hp_xy = (SeekBar) menu_sub_cheating.findViewById(R.id.cheat_xiaoyao_hp);
+							final SeekBar mp_xy = (SeekBar) menu_sub_cheating.findViewById(R.id.cheat_xiaoyao_mp);
+							final TextView hp_xy_text = (TextView) menu_sub_cheating.findViewById(R.id.cheat_xiaoyao_hp_text);
+							final TextView mp_xy_text = (TextView) menu_sub_cheating.findViewById(R.id.cheat_xiaoyao_mp_text);
+							hp_xy_text.setText("HP: "+old_hp_xy);
+							hp_xy.setProgress(nativeGetHP(0));
+							hp_xy.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+								@Override
+								public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+									hp_xy_text.setText("HP: "+progress);
+								}
+								@Override
+								public void onStartTrackingTouch(SeekBar seekBar) {}
+								@Override
+								public void onStopTrackingTouch(SeekBar seekBar) {
+									int tmp = wealth - mp_xy.getProgress() - seekBar.getProgress();
+									if ( tmp < 0){
+										seekBar.setProgress(wealth - mp_xy.getProgress());
+										currentCoins.setText("0");
+									} else currentCoins.setText(""+tmp);
+								}
+							});
+							mp_xy_text.setText("MP: "+old_mp_xy);
+							mp_xy.setProgress(nativeGetMP(0));
+							mp_xy.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+								@Override
+								public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+									mp_xy_text.setText("MP: "+progress);
+								}
+								@Override
+								public void onStartTrackingTouch(SeekBar seekBar) {}
+								@Override
+								public void onStopTrackingTouch(SeekBar seekBar) {
+									int tmp = wealth - hp_xy.getProgress() - seekBar.getProgress();
+									if ( tmp < 0){
+										seekBar.setProgress(wealth - hp_xy.getProgress());
+										currentCoins.setText("0");
+									} else currentCoins.setText(""+tmp);
+								}
+							});
+							d.setView(menu_sub_cheating)
+								.setNegativeButton(getResources().getString(R.string.cancel), null)
+								.setPositiveButton(getResources().getString(R.string.ok), 
+										new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										nativeSetHP(0, hp_xy.getProgress());
+										nativeSetMP(0, mp_xy.getProgress());
+										nativeSetMoney(wealth - hp_xy.getProgress() - mp_xy.getProgress());
+									}
+								}).setCancelable(true);
 //							final String[] items = findSavedGameFiles();
 //							d.setItems(items, new DialogInterface.OnClickListener() {
 //								@Override
@@ -364,7 +429,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 									}
 								}).setCancelable(true);
 					}
-					if (position != 4) d.create().show();
+					d.create().show();
 				}
 				
 			});
@@ -380,7 +445,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	 * @author HappyZ
 	 */
 	private void gameCheat(){
-		int money = nativeReadMoney();
+		int money = nativeGetMoney();
 		if (money < 500){
 			Toast.makeText(instance, "You only have "+money+". We need 500 coins.", Toast.LENGTH_SHORT).show();
 			return;
@@ -739,7 +804,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		System.exit(0);
 	}
 	
-	public static native int nativeReadMoney();
+	public static native int nativeGetMoney();
+	public static native void nativeSetMoney(int amount);
+	public static native int nativeGetHP(int who);
+	public static native void nativeSetHP(int who, int amount);
+	public static native int nativeGetMP(int who);
+	public static native void nativeSetMP(int who, int amount);
 	public static native boolean nativeCheat(int who, int what);
 }
 

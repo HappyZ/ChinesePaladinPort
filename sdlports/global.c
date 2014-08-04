@@ -19,7 +19,6 @@
 //
 
 #include "main.h"
-#include <jni.h>
 
 LPGLOBALVARS gpGlobals = NULL;
 
@@ -1884,26 +1883,4 @@ PAL_PlayerLevelUp(
    gpGlobals->Exp.rgPrimaryExp[wPlayerRole].wExp = 0;
    gpGlobals->Exp.rgPrimaryExp[wPlayerRole].wLevel =
       gpGlobals->g.PlayerRoles.rgwLevel[wPlayerRole];
-}
-
-// jni to read money
-JNIEXPORT jint JNICALL
-Java_org_happyz_chinesepaladin_MainActivity_nativeReadMoney ( JNIEnv  env, jobject thiz)
-{
-	return (int)gpGlobals->dwCash;
-}
-
-// jni to cheat
-JNIEXPORT jboolean JNICALL
-Java_org_happyz_chinesepaladin_MainActivity_nativeCheat ( JNIEnv  env, jobject thiz, jint who, jint what)
-{
-	switch(what){
-	case 0:
-		gpGlobals->g.PlayerRoles.rgwMaxHP[(WORD) who] = 999;
-		gpGlobals->g.PlayerRoles.rgwHP[(WORD) who] = 999;			
-		gpGlobals->dwCash -= 500;
-		return 1;
-	default:
-		return 0;
-	}
 }
